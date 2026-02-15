@@ -2,8 +2,12 @@
 
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar";
 import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
+import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
+import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import React, { useState } from "react";
+
+import { IoAdd, IoAddCircle } from "react-icons/io5";
+import AddModal from "@/app/components/calendar/AddModal";
 
 interface ScheduleType {
   id: number;
@@ -11,80 +15,72 @@ interface ScheduleType {
   content: string;
 }
 
+interface Test {
+  id: number;
+  title: string;
+  date: string;
+}
+
 const Schedule = () => {
-  const [date, setDate] = useState<string | any>("");
-  const [schedule, setSchedule] = useState<ScheduleType[]>([
+  const [isModal, setIsModal] = useState<boolean>(false);
+  const [modalDate, setModalDate] = useState<Date | null>(null); // 모달에 전달되는 날짜
+  const [schedule, setSchedule] = useState<Test | any>([
     {
       id: 1,
-      date: "2026-02-03",
-      content: "오늘은 2월 3일~",
-    },
-    {
-      id: 2,
+      title: "test1",
       date: "2026-02-11",
-      content: "오늘은 2월 11일~",
     },
-    {
-      id: 3,
-      date: "2026-02-15",
-      content: "오늘은 2월 15일~",
-    },
-    {
-      id: 4,
-      date: "2026-02-20",
-      content: "오늘은 2월 20일~",
-    },
-    {
-      id: 5,
-      date: "2026-02-22",
-      content: "오늘은 2월 22일~",
-    },
-    {
-      id: 6,
-      date: "2026-02-03",
-      content: "오늘은 2월 3일~ !!",
-    },
-  ]);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  ]); // 스케줄 값
+
+  // 날짜 클릭 함수
+  const handleDateClick = (e: any) => {
+    console.log("date", e);
+  };
+
+  // 날짜 이벤트 클릭 함수
+  const handleEventClick = (e: any) => {
+    console.log("event", e);
+  };
+
+  console.log("isModal", isModal);
 
   return (
     <div className="w-full h-full">
-      <FullCalendar plugins={[dayGridPlugin]} initialView="dayGridMonth" />
-      {/* <Calendar
-        mode="single"
-        selected={date}
-        onSelect={setDate}
-        className="w-full rounded-lg border"
-        classNames={{
-          months: "calendar_months",
-          month: "calendar_month",
-          weekdays: "calendar_weekdays bg-blue-100",
-          week: "calendar_week",
-          day: "calendar_day border aspect-auto h-auto",
-          day_button: "aspect-auto",
-        }}
-        components={{
-          DayButton: ({ children, day, modifiers, ...props }) => {
-            return (
-              <CalendarDayButton
-                day={day}
-                modifiers={modifiers}
-                {...props}
-                onClick={() => setSelectedDate(day.isoDate)}
+      <FullCalendar
+        plugins={[dayGridPlugin, interactionPlugin]}
+        initialView="dayGridMonth"
+        events={schedule}
+        // dateClick={handleDateClick}
+        eventClick={handleEventClick}
+        dayCellContent={(info) => {
+          return (
+            <div className="w-full group flex justify-between">
+              <span>{info.dayNumberText}</span>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setModalDate(info.date);
+                  setIsModal(true);
+                  console.log("info", info);
+                }}
+                className="opacity-0 group-hover:opacity-100 transition cursor-pointer"
               >
-                <div className="w-full">{children}</div>
-                <ul className="w-full bg-red-50">
-                  {schedule
-                    .filter((el) => el.date === day.isoDate)
-                    .map((el) => (
-                      <li key={el.id}>{el.content}</li>
-                    ))}
-                </ul>
-              </CalendarDayButton>
-            );
-          },
+                <IoAddCircle size={20} />
+              </button>
+            </div>
+          );
         }}
-      /> */}
+      />
+      {isModal && (
+        <AddModal
+          className="opacity-0 group-hover:opacity-100 transition cursor-pointer"
+          triggerVisible={false}
+          date={modalDate}
+          isModal={isModal}
+          setIsModal={setIsModal}
+        />
+      )}
     </div>
   );
 };
