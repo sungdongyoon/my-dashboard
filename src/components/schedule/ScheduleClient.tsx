@@ -1,36 +1,17 @@
 "use client";
 
-import { Calendar, CalendarDayButton } from "@/components/ui/calendar";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { IoAdd, IoAddCircle } from "react-icons/io5";
-import AddModal from "@/app/components/calendar/AddModal";
+import { IoAddCircle } from "react-icons/io5";
 
-interface ScheduleType {
-  id: number;
-  date: string;
-  content: string;
-}
+import AddModal from "@/src/components/schedule/AddModal";
 
-interface Test {
-  id: number;
-  title: string;
-  date: string;
-}
-
-const Schedule = () => {
+const ScheduleClient = ({ data }: { data: any }) => {
   const [isModal, setIsModal] = useState<boolean>(false);
   const [modalDate, setModalDate] = useState<Date | null>(null); // 모달에 전달되는 날짜
-  const [schedule, setSchedule] = useState<Test | any>([
-    {
-      id: 1,
-      title: "test1",
-      date: "2026-02-11",
-    },
-  ]); // 스케줄 값
 
   // 날짜 클릭 함수
   const handleDateClick = (e: any) => {
@@ -39,17 +20,16 @@ const Schedule = () => {
 
   // 날짜 이벤트 클릭 함수
   const handleEventClick = (e: any) => {
-    console.log("event", e);
+    // console.log("event", e);
   };
 
-  console.log("isModal", isModal);
-
+  // console.log("Data", data);
   return (
-    <div className="w-full h-full">
+    <>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        events={schedule}
+        events={data}
         // dateClick={handleDateClick}
         eventClick={handleEventClick}
         dayCellContent={(info) => {
@@ -62,7 +42,7 @@ const Schedule = () => {
                   e.stopPropagation();
                   setModalDate(info.date);
                   setIsModal(true);
-                  console.log("info", info);
+                  // console.log("info", info);
                 }}
                 className="opacity-0 group-hover:opacity-100 transition cursor-pointer"
               >
@@ -81,8 +61,8 @@ const Schedule = () => {
           setIsModal={setIsModal}
         />
       )}
-    </div>
+    </>
   );
 };
 
-export default Schedule;
+export default ScheduleClient;

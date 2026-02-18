@@ -1,10 +1,11 @@
 import React from "react";
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import AppSidebar from "../components/AppSidebar";
-import Header from "../components/Header";
+import { SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
 
-const layout = ({ children }: { children: React.ReactNode }) => {
+import Header from "@/src/components/Header";
+import AppSidebar from "@/src/components/AppSidebar";
+
+const layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
       <AppSidebar />
