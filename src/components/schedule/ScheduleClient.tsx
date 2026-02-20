@@ -4,12 +4,14 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 import { IoAddCircle } from "react-icons/io5";
 
 import AddModal from "@/src/components/schedule/AddModal";
 
-const ScheduleClient = ({ data }: { data: any }) => {
+const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
   const [isModal, setIsModal] = useState<boolean>(false);
   const [modalDate, setModalDate] = useState<Date | null>(null); // 모달에 전달되는 날짜
 
@@ -22,8 +24,13 @@ const ScheduleClient = ({ data }: { data: any }) => {
   const handleEventClick = (e: any) => {
     // console.log("event", e);
   };
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["test"],
+    queryFn: () => axios.get("/api/schedule").then((res) => res.data),
+  });
+  console.log("data", data);
 
-  // console.log("Data", data);
+  // console.log("scheduleData", scheduleData);
   return (
     <>
       <FullCalendar

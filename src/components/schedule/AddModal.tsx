@@ -60,6 +60,9 @@ const AddModal = ({
   // const { scheduleData, setScheduleData, resetScheduleData } =
   //   useScheduleStore();
 
+  // post 스케줄 데이터
+  const handlePostSchedule = () => {};
+
   console.log("data", scheduleData);
 
   return (
