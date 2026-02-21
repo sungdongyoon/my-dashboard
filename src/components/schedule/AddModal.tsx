@@ -19,6 +19,7 @@ import { useScheduleStore } from "@/src/store/scheduleStore";
 import { createClient } from "@/src/utils/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 
 import React, { Fragment, useState } from "react";
 import { IoAddCircle, IoCloseCircle } from "react-icons/io5";
@@ -32,8 +33,8 @@ interface AddModalType {
 }
 
 interface ScheduleType {
-  id: string;
-  date: Date | null;
+  // id: string;
+  date: string | null;
   title: string;
   memo?: string;
 }
@@ -53,11 +54,14 @@ const AddModal = ({
   // 트리거 hidden or visible
   const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
 
+  // supbase
   const supabaseClient = createClient();
 
+  // 라우터
+  const router = useRouter();
+
   const [scheduleData, setScheduleData] = useState<ScheduleType>({
-    id: `${dateStr}_1`,
-    date,
+    date: dateStr,
     title: "",
     memo: "",
   });
@@ -70,15 +74,18 @@ const AddModal = ({
 
     await supabaseClient.from("schedules").insert([
       {
-        id: "2026-02-22_2",
-        date: "2026-02-22",
-        title: "테스트 제목2",
-        memo: "테스트 메모2",
+        date: scheduleData.date,
+        title: scheduleData.title,
+        memo: scheduleData.memo,
       },
     ]);
+
+    alert("일정이 등록되었습니다!");
+    setIsModal?.(false);
+    router.refresh();
   };
 
-  console.log("data", scheduleData);
+  // console.log("data", scheduleData);
 
   return (
     <Dialog open={isModal} onOpenChange={(open) => setIsModal?.(open)}>
