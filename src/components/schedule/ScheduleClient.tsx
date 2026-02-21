@@ -24,10 +24,13 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
   const handleEventClick = (e: any) => {
     // console.log("event", e);
   };
+
+  // tanstack query 테스트
   const { data, isLoading, error } = useQuery({
     queryKey: ["test"],
     queryFn: () => axios.get("/api/schedule").then((res) => res.data),
   });
+
   console.log("data", data);
 
   // console.log("scheduleData", scheduleData);
@@ -36,7 +39,7 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        events={data}
+        events={scheduleData}
         // dateClick={handleDateClick}
         eventClick={handleEventClick}
         dayCellContent={(info) => {

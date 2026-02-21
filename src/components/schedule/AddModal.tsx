@@ -16,7 +16,9 @@ import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
 import { useScheduleStore } from "@/src/store/scheduleStore";
+import { createClient } from "@/src/utils/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 import React, { Fragment, useState } from "react";
 import { IoAddCircle, IoCloseCircle } from "react-icons/io5";
@@ -51,6 +53,8 @@ const AddModal = ({
   // 트리거 hidden or visible
   const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
 
+  const supabaseClient = createClient();
+
   const [scheduleData, setScheduleData] = useState<ScheduleType>({
     id: `${dateStr}_1`,
     date,
@@ -61,7 +65,18 @@ const AddModal = ({
   //   useScheduleStore();
 
   // post 스케줄 데이터
-  const handlePostSchedule = () => {};
+  const handlePostSchedule = async (e: any) => {
+    e.preventDefault();
+
+    await supabaseClient.from("schedules").insert([
+      {
+        id: "2026-02-22_2",
+        date: "2026-02-22",
+        title: "테스트 제목2",
+        memo: "테스트 메모2",
+      },
+    ]);
+  };
 
   console.log("data", scheduleData);
 
@@ -107,7 +122,9 @@ const AddModal = ({
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button type="submit">Save changes</Button>
+          <Button type="submit" onClick={handlePostSchedule}>
+            Save changes
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
