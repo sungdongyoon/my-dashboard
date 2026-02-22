@@ -1,5 +1,6 @@
 "use client";
 
+import React, { Fragment } from "react";
 import { Button } from "@/src/components/ui/button";
 import {
   Dialog,
@@ -15,37 +16,24 @@ import { Field, FieldGroup } from "@/src/components/ui/field";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
-import { useScheduleStore } from "@/src/store/scheduleStore";
-import { createClient } from "@/src/utils/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
+import { IoAddCircle } from "react-icons/io5";
 
-import React, { Fragment, useState } from "react";
-import { IoAddCircle, IoCloseCircle } from "react-icons/io5";
-
-interface AddModalType {
+interface DetailsModalType {
   className?: string;
   date: Date | null;
   triggerVisible?: boolean;
-  isAddModal?: boolean;
-  setIsAddModal?: (payload: boolean) => void;
+  isDetailsModal?: boolean;
+  setIsDetailsModal?: (payload: boolean) => void;
 }
 
-interface ScheduleType {
-  // id: string;
-  date: string | null;
-  title: string;
-  memo?: string;
-}
-
-const AddModal = ({
+const DetailsModal = ({
   className,
   date,
   triggerVisible = true,
-  isAddModal,
-  setIsAddModal,
-}: AddModalType) => {
+  isDetailsModal,
+  setIsDetailsModal,
+}: DetailsModalType) => {
   // 날짜 변환
   const dateStr = date
     ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
@@ -54,41 +42,11 @@ const AddModal = ({
   // 트리거 hidden or visible
   const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
 
-  // supbase
-  const supabaseClient = createClient();
-
-  // 라우터
-  const router = useRouter();
-
-  const [scheduleData, setScheduleData] = useState<ScheduleType>({
-    date: dateStr,
-    title: "",
-    memo: "",
-  });
-  // const { scheduleData, setScheduleData, resetScheduleData } =
-  //   useScheduleStore();
-
-  // post 스케줄 데이터
-  const handlePostSchedule = async (e: any) => {
-    e.preventDefault();
-
-    await supabaseClient.from("schedules").insert([
-      {
-        date: scheduleData.date,
-        title: scheduleData.title,
-        memo: scheduleData.memo,
-      },
-    ]);
-
-    alert("일정이 등록되었습니다!");
-    setIsAddModal?.(false);
-    router.refresh();
-  };
-
-  // console.log("data", scheduleData);
-
   return (
-    <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
+    <Dialog
+      open={isDetailsModal}
+      onOpenChange={(open) => setIsDetailsModal?.(open)}
+    >
       <TriggerWrapper>
         <DialogTrigger className={className}>
           <IoAddCircle size={20} />
@@ -107,10 +65,10 @@ const AddModal = ({
               id="title"
               name="title"
               placeholder="할 일을 입력해주세요."
-              value={scheduleData?.title}
-              onChange={(e) =>
-                setScheduleData({ ...scheduleData, title: e.target.value })
-              }
+              // value={scheduleData?.title}
+              // onChange={(e) =>
+              //   setScheduleData({ ...scheduleData, title: e.target.value })
+              // }
             />
           </Field>
           <Field>
@@ -118,10 +76,10 @@ const AddModal = ({
             <Textarea
               id="memo"
               name="memo"
-              value={scheduleData?.memo}
-              onChange={(e) =>
-                setScheduleData({ ...scheduleData, memo: e.target.value })
-              }
+              // value={scheduleData?.memo}
+              // onChange={(e) =>
+              //   setScheduleData({ ...scheduleData, memo: e.target.value })
+              // }
             />
           </Field>
         </FieldGroup>
@@ -129,13 +87,11 @@ const AddModal = ({
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button type="submit" onClick={handlePostSchedule}>
-            Save changes
-          </Button>
+          <Button type="submit">Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default AddModal;
+export default DetailsModal;
