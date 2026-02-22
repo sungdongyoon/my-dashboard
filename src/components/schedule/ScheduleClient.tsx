@@ -12,10 +12,18 @@ import { IoAddCircle } from "react-icons/io5";
 import AddModal from "@/src/components/schedule/AddModal";
 import DetailsModal from "./DetailsModal";
 
+interface DetailsType {
+  id: string;
+  title: string;
+  props: {};
+  date: string;
+}
+
 const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
-  const [isAddModal, setIsAddModal] = useState<boolean>(false); // 스케줄 추가 모달
-  const [isDetailsModal, setIsDetailsModal] = useState<boolean>(false); // 스케줄 상세 정보 모달
-  const [modalDate, setModalDate] = useState<Date | null>(null); // 모달에 전달되는 날짜
+  const [isAddModal, setIsAddModal] = useState<boolean>(false); // [Add Modal] 스케줄 추가 모달
+  const [isDetailsModal, setIsDetailsModal] = useState<boolean>(false); // [Details Modal] 스케줄 상세 정보 모달
+  const [modalDate, setModalDate] = useState<Date | null>(null); // [Add Modal] 스케줄 추가 모달에 전달되는 날짜
+  const [details, setDetails] = useState<DetailsType | null>(null);
 
   // 날짜 클릭 함수
   const handleDateClick = (e: any) => {
@@ -24,10 +32,17 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
 
   // 날짜 이벤트 클릭 함수
   const handleEventClick = (e: any) => {
-    console.log("event", e.event._def);
-    console.log("이벤트 id :", e.event._def.publicId);
-    console.log("이벤트 title :", e.event._def.title);
-    console.log("이벤트 props :", e.event._def.extendedProps);
+    const event = e.event;
+    // console.log("이벤트 id :", event._def.publicId);
+    // console.log("이벤트 title :", event._def.title);
+    // console.log("이벤트 props :", event._def.extendedProps);
+    // console.log("event", e.event);
+    setDetails({
+      id: event._def.publicId,
+      title: event._def.title,
+      props: event._def.extendedProps,
+      date: e.event.startStr,
+    });
 
     setIsDetailsModal(true);
   };
@@ -39,8 +54,8 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
   // });
 
   // console.log("data", data);
+  console.log("schedule", scheduleData);
 
-  console.log("scheduleData", scheduleData);
   return (
     <>
       <FullCalendar
@@ -81,9 +96,9 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
       {isDetailsModal && (
         <DetailsModal
           triggerVisible={false}
-          date={new Date()}
           isDetailsModal={isDetailsModal}
           setIsDetailsModal={setIsDetailsModal}
+          data={details}
         />
       )}
     </>

@@ -21,26 +21,27 @@ import { IoAddCircle } from "react-icons/io5";
 
 interface DetailsModalType {
   className?: string;
-  date: Date | null;
   triggerVisible?: boolean;
   isDetailsModal?: boolean;
   setIsDetailsModal?: (payload: boolean) => void;
+  data: {
+    id: string;
+    date: string;
+    title: string;
+    props: {};
+  } | null;
 }
 
 const DetailsModal = ({
   className,
-  date,
   triggerVisible = true,
   isDetailsModal,
   setIsDetailsModal,
+  data,
 }: DetailsModalType) => {
-  // 날짜 변환
-  const dateStr = date
-    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
-    : null;
-
   // 트리거 hidden or visible
   const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
+  console.log("data", data);
 
   return (
     <Dialog
@@ -55,7 +56,7 @@ const DetailsModal = ({
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle>{dateStr}</DialogTitle>
+            <DialogTitle>{data?.date}</DialogTitle>
           </div>
         </DialogHeader>
         <FieldGroup>
