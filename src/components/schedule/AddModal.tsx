@@ -18,7 +18,6 @@ import { Textarea } from "@/src/components/ui/textarea";
 import { useScheduleStore } from "@/src/store/scheduleStore";
 import { createClient } from "@/src/utils/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { SupabaseClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
 import React, { Fragment, useState } from "react";
@@ -127,10 +126,10 @@ const AddModal = ({
         </FieldGroup>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">닫기</Button>
           </DialogClose>
           <Button type="submit" onClick={handlePostSchedule}>
-            Save changes
+            저장
           </Button>
         </DialogFooter>
       </DialogContent>

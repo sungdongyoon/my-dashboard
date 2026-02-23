@@ -15,7 +15,9 @@ import DetailsModal from "./DetailsModal";
 interface DetailsType {
   id: string;
   title: string;
-  props: {};
+  props: {
+    memo?: string;
+  };
   date: string;
 }
 
@@ -98,7 +100,7 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
           triggerVisible={false}
           isDetailsModal={isDetailsModal}
           setIsDetailsModal={setIsDetailsModal}
-          data={details}
+          detailsData={details}
         />
       )}
     </>

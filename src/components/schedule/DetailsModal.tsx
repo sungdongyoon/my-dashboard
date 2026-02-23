@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Button } from "@/src/components/ui/button";
 import {
   Dialog,
@@ -18,18 +18,30 @@ import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { IoAddCircle } from "react-icons/io5";
+import { createClient } from "@/src/utils/supabase/client";
 
 interface DetailsModalType {
   className?: string;
   triggerVisible?: boolean;
   isDetailsModal?: boolean;
   setIsDetailsModal?: (payload: boolean) => void;
-  data: {
+  detailsData: {
     id: string;
     date: string;
     title: string;
-    props: {};
+    props: {
+      memo?: string;
+    };
   } | null;
+}
+
+interface DetailsInputType {
+  id: string;
+  title: string;
+  props: {
+    memo?: string;
+  };
+  date: string;
 }
 
 const DetailsModal = ({
@@ -37,11 +49,38 @@ const DetailsModal = ({
   triggerVisible = true,
   isDetailsModal,
   setIsDetailsModal,
-  data,
+  detailsData,
 }: DetailsModalType) => {
   // 트리거 hidden or visible
   const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
-  console.log("data", data);
+
+  // supbase
+  const supabaseClient = createClient();
+
+  const [isUpdate, setIsUpdate] = useState<boolean>(false); // 일정 업데이트
+  const [detailsInput, setDetailsInput] = useState<DetailsInputType | null>(
+    detailsData,
+  );
+
+  // update 스케줄 데이터
+  const handlePostSchedule = async (e: any) => {
+    e.preventDefault();
+
+    console.log("업데이트 시작");
+
+    await supabaseClient
+      .from("schedules")
+      .update({
+        date: detailsInput?.date,
+        title: detailsInput?.title,
+        memo: detailsInput?.props.memo,
+      })
+      .eq("id", detailsInput?.id);
+
+    setIsUpdate(false);
+  };
+
+  console.log("detailsData", detailsInput);
 
   return (
     <Dialog
@@ -56,39 +95,52 @@ const DetailsModal = ({
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle>{data?.date}</DialogTitle>
+            {isUpdate === false ? (
+              <DialogTitle>{detailsInput?.title}</DialogTitle>
+            ) : (
+              <Input
+                type="text"
+                value={detailsInput?.title}
+                onChange={(e) =>
+                  detailsInput &&
+                  setDetailsInput({ ...detailsInput, title: e.target.value })
+                }
+                placeholder="제목을 입력해주세요."
+              />
+            )}
           </div>
         </DialogHeader>
-        <FieldGroup>
-          <Field>
-            <Label htmlFor="title">제목</Label>
-            <Input
-              id="title"
-              name="title"
-              placeholder="할 일을 입력해주세요."
-              // value={scheduleData?.title}
-              // onChange={(e) =>
-              //   setScheduleData({ ...scheduleData, title: e.target.value })
-              // }
-            />
-          </Field>
-          <Field>
-            <Label htmlFor="memo">메모</Label>
-            <Textarea
-              id="memo"
-              name="memo"
-              // value={scheduleData?.memo}
-              // onChange={(e) =>
-              //   setScheduleData({ ...scheduleData, memo: e.target.value })
-              // }
-            />
-          </Field>
-        </FieldGroup>
+        <div>{detailsInput?.date}</div>
+        {isUpdate === false ? (
+          <div>{detailsInput?.props?.memo}</div>
+        ) : (
+          <Input
+            type="text"
+            value={detailsInput?.props?.memo}
+            onChange={(e) =>
+              detailsInput &&
+              setDetailsInput({
+                ...detailsInput,
+                props: { memo: e.target.value },
+              })
+            }
+            placeholder="제목을 입력해주세요."
+          />
+        )}
+
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">닫기</Button>
           </DialogClose>
-          <Button type="submit">Save changes</Button>
+          {isUpdate === false ? (
+            <Button type="submit" onClick={() => setIsUpdate(true)}>
+              수정
+            </Button>
+          ) : (
+            <Button type="submit" onClick={handlePostSchedule}>
+              저장
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
