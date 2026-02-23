@@ -19,6 +19,7 @@ import { Textarea } from "@/src/components/ui/textarea";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { IoAddCircle } from "react-icons/io5";
 import { createClient } from "@/src/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 interface DetailsModalType {
   className?: string;
@@ -57,6 +58,9 @@ const DetailsModal = ({
   // supbase
   const supabaseClient = createClient();
 
+  // 라우터
+  const router = useRouter();
+
   const [isUpdate, setIsUpdate] = useState<boolean>(false); // 일정 업데이트
   const [detailsInput, setDetailsInput] = useState<DetailsInputType | null>(
     detailsData,
@@ -66,21 +70,24 @@ const DetailsModal = ({
   const handlePostSchedule = async (e: any) => {
     e.preventDefault();
 
-    console.log("업데이트 시작");
+    if (confirm("일정을 업데이트 하시겠습니까?")) {
+      await supabaseClient
+        .from("schedules")
+        .update({
+          date: detailsInput?.date,
+          title: detailsInput?.title,
+          memo: detailsInput?.props.memo,
+        })
+        .eq("id", detailsInput?.id);
+      alert("일정이 변경되었습니다.");
 
-    await supabaseClient
-      .from("schedules")
-      .update({
-        date: detailsInput?.date,
-        title: detailsInput?.title,
-        memo: detailsInput?.props.memo,
-      })
-      .eq("id", detailsInput?.id);
-
-    setIsUpdate(false);
+      setIsUpdate(false);
+      setIsDetailsModal?.(false);
+      router.refresh();
+    }
   };
 
-  console.log("detailsData", detailsInput);
+  // console.log("detailsData", detailsInput);
 
   return (
     <Dialog
