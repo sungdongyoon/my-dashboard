@@ -26,12 +26,11 @@ import { Textarea } from "@/src/components/ui/textarea";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useRouter } from "next/navigation";
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { IoAddCircle } from "react-icons/io5";
-import { apiPostScheduleData } from "@/src/utils/schedules/utils";
-import { apiGetCategoryData } from "@/src/utils/categories/utils";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { usePostSchedule } from "@/src/hooks/mutations/useScheduleMutations";
 
 interface AddModalType {
   className?: string;
@@ -55,29 +54,26 @@ const AddModal = ({
   isAddModal,
   setIsAddModal,
 }: AddModalType) => {
-  // 날짜 변환
   const dateStr = date
     ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
-    : "";
+    : ""; // 날짜 string으로 변환
 
-  // 트리거 hidden or visible
-  const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
+  const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden; // 트리거 hidden or visible
 
-  // 라우터
-  const router = useRouter();
-
-  // tanstack query 클라이언트
-  const queryClient = useQueryClient();
-
+  /* hooks */
   const [scheduleData, setScheduleData] = useState<ScheduleType>({
     date: dateStr,
     title: "",
     memo: "",
   });
+
+  /* 커스텀 훅 */
+  const router = useRouter(); // 라우터
+  const postSchedule = usePostSchedule(); // 일정 추가 뮤테이션
   // const { scheduleData, setScheduleData, resetScheduleData } =
   //   useScheduleStore();
 
-  // 카테고리 데이터
+  /* 카테고리 데이터 */
   const {
     data: categoryData,
     isLoading: categoryLoading,
@@ -87,28 +83,22 @@ const AddModal = ({
     queryFn: () => axios.get("/api/categories").then((res) => res.data),
   });
 
-  // [post] 스케줄 뮤테이션
-  const postScheduleMutation = useMutation({
-    mutationFn: apiPostScheduleData,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["schedules"] });
-
-      alert("일정이 등록되었습니다!");
-      setIsAddModal?.(false);
-      router.refresh();
-    },
-    onError: (error) => {
-      console.error("스케줄 데이터 전송 실패", error);
-    },
-  });
-
-  // [post] 스케줄 데이터
+  /* [post] 스케줄 데이터 */
   const handlePostSchedule = async () => {
-    postScheduleMutation.mutate({
-      date: scheduleData.date,
-      title: scheduleData.title,
-      memo: scheduleData.memo ?? "",
-    });
+    postSchedule.mutate(
+      {
+        date: scheduleData.date,
+        title: scheduleData.title,
+        memo: scheduleData.memo ?? "",
+      },
+      {
+        onSuccess: () => {
+          alert("일정이 등록되었습니다!");
+          setIsAddModal?.(false);
+          router.refresh();
+        },
+      },
+    );
   };
 
   return (

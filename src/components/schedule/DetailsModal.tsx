@@ -17,9 +17,9 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { IoAddCircle } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import {
-  apiDeleteScheduleData,
-  apiUpdateScheduleData,
-} from "@/src/utils/schedules/utils";
+  useDeleteSchedule,
+  useUpdateSchedule,
+} from "@/src/hooks/mutations/useScheduleMutations";
 
 interface DetailsModalType {
   className?: string;
@@ -52,49 +52,58 @@ const DetailsModal = ({
   setIsDetailsModal,
   detailsData,
 }: DetailsModalType) => {
-  // 트리거 hidden or visible
-  const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
+  const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden; // 트리거 hidden or visible
 
-  // 라우터
-  const router = useRouter();
-
+  /* hooks */
   const [isUpdate, setIsUpdate] = useState<boolean>(false); // 일정 업데이트
   const [detailsInput, setDetailsInput] = useState<DetailsInputType | null>(
     detailsData,
   ); // 일정 상세 정보
 
-  // update 스케줄 데이터
+  /* 커스텀 훅 */
+  const router = useRouter(); // 라우터
+  const updateSchedule = useUpdateSchedule(); // 일정 업데이트 뮤테이션
+  const deleteSchedule = useDeleteSchedule(); // 일정 삭제 뮤테이션
+
+  /* [update] 스케줄 데이터 */
   const handlePostSchedule = async () => {
     if (confirm("일정을 업데이트 하시겠습니까?")) {
-      try {
-        await apiUpdateScheduleData({
+      updateSchedule.mutate(
+        {
           id: detailsInput?.id ?? "",
           date: detailsInput?.date ?? "",
           title: detailsInput?.title ?? "",
           memo: detailsInput?.props.memo ?? "",
-        });
+        },
+        {
+          onSuccess: () => {
+            alert("일정이 변경되었습니다!");
 
-        alert("일정이 변경되었습니다.");
-
-        setIsUpdate(false);
-        setIsDetailsModal?.(false);
-        router.refresh();
-      } catch (error) {
-        console.error("일정 업데이트 실패", error);
-      }
+            setIsUpdate(false);
+            setIsDetailsModal?.(false);
+            router.refresh();
+          },
+        },
+      );
     }
   };
 
-  // delete 스케줄 데이터
+  /* [delete] 스케줄 데이터 */
   const handleDeleteSchedule = async () => {
     if (confirm("일정을 삭제하시겠습니까?")) {
-      await apiDeleteScheduleData({
-        id: detailsInput?.id ?? "",
-      });
+      deleteSchedule.mutate(
+        {
+          id: detailsInput?.id ?? "",
+        },
+        {
+          onSuccess: () => {
+            alert("일정이 삭제되었습니다!");
 
-      alert("일정이 삭제되었습니다.");
-      setIsDetailsModal?.(false);
-      router.refresh();
+            setIsDetailsModal?.(false);
+            router.refresh();
+          },
+        },
+      );
     }
   };
 
