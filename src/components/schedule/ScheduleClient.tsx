@@ -19,13 +19,14 @@ interface DetailsType {
     memo?: string;
   };
   date: string;
+  category: string;
 }
 
 const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
   const [isAddModal, setIsAddModal] = useState<boolean>(false); // [Add Modal] 스케줄 추가 모달
   const [isDetailsModal, setIsDetailsModal] = useState<boolean>(false); // [Details Modal] 스케줄 상세 정보 모달
   const [modalDate, setModalDate] = useState<Date | null>(null); // [Add Modal] 스케줄 추가 모달에 전달되는 날짜
-  const [details, setDetails] = useState<DetailsType | null>(null);
+  const [details, setDetails] = useState<DetailsType | null>(null); // [Details Modal] 스케줄 상세 정보
 
   // 날짜 클릭 함수
   const handleDateClick = (e: any) => {
@@ -44,6 +45,7 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
       title: event._def.title,
       props: event._def.extendedProps,
       date: e.event.startStr,
+      category: "",
     });
 
     setIsDetailsModal(true);
@@ -54,9 +56,6 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
   //   queryKey: ["test"],
   //   queryFn: () => axios.get("/api/schedule").then((res) => res.data),
   // });
-
-  // console.log("data", data);
-  console.log("schedule", scheduleData);
 
   return (
     <>
@@ -76,7 +75,6 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
                   e.stopPropagation();
                   setModalDate(info.date);
                   setIsAddModal(true);
-                  // console.log("info", info);
                 }}
                 className="opacity-0 group-hover:opacity-100 transition cursor-pointer"
               >

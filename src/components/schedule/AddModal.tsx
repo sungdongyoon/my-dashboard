@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
 import { Button } from "@/src/components/ui/button";
 import {
   Dialog,
@@ -15,13 +23,12 @@ import { Field, FieldGroup } from "@/src/components/ui/field";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
-import { useScheduleStore } from "@/src/store/scheduleStore";
-import { createClient } from "@/src/utils/supabase/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useRouter } from "next/navigation";
 
 import React, { Fragment, useState } from "react";
-import { IoAddCircle, IoCloseCircle } from "react-icons/io5";
+import { IoAddCircle } from "react-icons/io5";
+import { apiPostScheduleData } from "@/src/api/utils";
 
 interface AddModalType {
   className?: string;
@@ -33,7 +40,7 @@ interface AddModalType {
 
 interface ScheduleType {
   // id: string;
-  date: string | null;
+  date: string;
   title: string;
   memo?: string;
 }
@@ -48,13 +55,10 @@ const AddModal = ({
   // 날짜 변환
   const dateStr = date
     ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
-    : null;
+    : "";
 
   // 트리거 hidden or visible
   const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
-
-  // supbase
-  const supabaseClient = createClient();
 
   // 라우터
   const router = useRouter();
@@ -67,24 +71,22 @@ const AddModal = ({
   // const { scheduleData, setScheduleData, resetScheduleData } =
   //   useScheduleStore();
 
-  // post 스케줄 데이터
-  const handlePostSchedule = async (e: any) => {
-    e.preventDefault();
-
-    await supabaseClient.from("schedules").insert([
-      {
+  // [post] 스케줄 데이터
+  const handlePostSchedule = async () => {
+    try {
+      await apiPostScheduleData({
         date: scheduleData.date,
         title: scheduleData.title,
-        memo: scheduleData.memo,
-      },
-    ]);
+        memo: scheduleData.memo ?? "",
+      });
 
-    alert("일정이 등록되었습니다!");
-    setIsAddModal?.(false);
-    router.refresh();
+      alert("일정이 등록되었습니다!");
+      setIsAddModal?.(false);
+      router.refresh();
+    } catch (error) {
+      console.error("스케줄 데이터 전송 실패", error);
+    }
   };
-
-  // console.log("data", scheduleData);
 
   return (
     <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
@@ -111,6 +113,23 @@ const AddModal = ({
                 setScheduleData({ ...scheduleData, title: e.target.value })
               }
             />
+          </Field>
+          <Field>
+            <div className="flex gap-1 items-center">
+              <Label htmlFor="category">카테고리</Label>
+            </div>
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="카테고리" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </Field>
           <Field>
             <Label htmlFor="memo">메모</Label>

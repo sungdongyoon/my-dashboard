@@ -12,14 +12,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/src/components/ui/dialog";
-import { Field, FieldGroup } from "@/src/components/ui/field";
 import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
-import { Textarea } from "@/src/components/ui/textarea";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { IoAddCircle } from "react-icons/io5";
-import { createClient } from "@/src/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { apiDeleteScheduleData, apiUpdateScheduleData } from "@/src/api/utils";
 
 interface DetailsModalType {
   className?: string;
@@ -55,9 +52,6 @@ const DetailsModal = ({
   // 트리거 hidden or visible
   const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
 
-  // supbase
-  const supabaseClient = createClient();
-
   // 라우터
   const router = useRouter();
 
@@ -66,34 +60,36 @@ const DetailsModal = ({
     detailsData,
   ); // 일정 상세 정보
 
-  // 일정 삭제 함수
-  const handleDeleteSchedule = async () => {
-    if (confirm("일정을 삭제하시겠습니까?")) {
-      await supabaseClient
-        .from("schedules")
-        .delete()
-        .eq("id", detailsInput?.id);
-
-      alert("일정이 삭제되었습니다.");
-      setIsDetailsModal?.(false);
-      router.refresh();
-    }
-  };
-
   // update 스케줄 데이터
   const handlePostSchedule = async () => {
     if (confirm("일정을 업데이트 하시겠습니까?")) {
-      await supabaseClient
-        .from("schedules")
-        .update({
-          date: detailsInput?.date,
-          title: detailsInput?.title,
-          memo: detailsInput?.props.memo,
-        })
-        .eq("id", detailsInput?.id);
-      alert("일정이 변경되었습니다.");
+      try {
+        await apiUpdateScheduleData({
+          id: detailsInput?.id ?? "",
+          date: detailsInput?.date ?? "",
+          title: detailsInput?.title ?? "",
+          memo: detailsInput?.props.memo ?? "",
+        });
 
-      setIsUpdate(false);
+        alert("일정이 변경되었습니다.");
+
+        setIsUpdate(false);
+        setIsDetailsModal?.(false);
+        router.refresh();
+      } catch (error) {
+        console.error("일정 업데이트 실패", error);
+      }
+    }
+  };
+
+  // delete 스케줄 데이터
+  const handleDeleteSchedule = async () => {
+    if (confirm("일정을 삭제하시겠습니까?")) {
+      await apiDeleteScheduleData({
+        id: detailsInput?.id ?? "",
+      });
+
+      alert("일정이 삭제되었습니다.");
       setIsDetailsModal?.(false);
       router.refresh();
     }
