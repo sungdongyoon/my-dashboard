@@ -16,7 +16,10 @@ import { Input } from "@/src/components/ui/input";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { IoAddCircle } from "react-icons/io5";
 import { useRouter } from "next/navigation";
-import { apiDeleteScheduleData, apiUpdateScheduleData } from "@/src/api/utils";
+import {
+  apiDeleteScheduleData,
+  apiUpdateScheduleData,
+} from "@/src/utils/schedules/utils";
 
 interface DetailsModalType {
   className?: string;

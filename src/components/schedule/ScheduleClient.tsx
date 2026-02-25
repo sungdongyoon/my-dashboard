@@ -51,12 +51,6 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
     setIsDetailsModal(true);
   };
 
-  // tanstack query 테스트
-  // const { data, isLoading, error } = useQuery({
-  //   queryKey: ["test"],
-  //   queryFn: () => axios.get("/api/schedule").then((res) => res.data),
-  // });
-
   return (
     <>
       <FullCalendar

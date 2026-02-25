@@ -1,4 +1,4 @@
-import { createClient } from "../utils/supabase/client";
+import { createClient } from "../supabase/client";
 
 // [get] 스케줄 데이터
 export const apiGetScheduleData = async () => {

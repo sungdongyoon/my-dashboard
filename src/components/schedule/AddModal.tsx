@@ -26,9 +26,12 @@ import { Textarea } from "@/src/components/ui/textarea";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useRouter } from "next/navigation";
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { IoAddCircle } from "react-icons/io5";
-import { apiPostScheduleData } from "@/src/api/utils";
+import { apiPostScheduleData } from "@/src/utils/schedules/utils";
+import { apiGetCategoryData } from "@/src/utils/categories/utils";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 interface AddModalType {
   className?: string;
@@ -63,6 +66,9 @@ const AddModal = ({
   // 라우터
   const router = useRouter();
 
+  // tanstack query 클라이언트
+  const queryClient = useQueryClient();
+
   const [scheduleData, setScheduleData] = useState<ScheduleType>({
     date: dateStr,
     title: "",
@@ -71,21 +77,38 @@ const AddModal = ({
   // const { scheduleData, setScheduleData, resetScheduleData } =
   //   useScheduleStore();
 
-  // [post] 스케줄 데이터
-  const handlePostSchedule = async () => {
-    try {
-      await apiPostScheduleData({
-        date: scheduleData.date,
-        title: scheduleData.title,
-        memo: scheduleData.memo ?? "",
-      });
+  // 카테고리 데이터
+  const {
+    data: categoryData,
+    isLoading: categoryLoading,
+    error: categoryError,
+  } = useQuery({
+    queryKey: ["category"],
+    queryFn: () => axios.get("/api/categories").then((res) => res.data),
+  });
+
+  // [post] 스케줄 뮤테이션
+  const postScheduleMutation = useMutation({
+    mutationFn: apiPostScheduleData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
 
       alert("일정이 등록되었습니다!");
       setIsAddModal?.(false);
       router.refresh();
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error("스케줄 데이터 전송 실패", error);
-    }
+    },
+  });
+
+  // [post] 스케줄 데이터
+  const handlePostSchedule = async () => {
+    postScheduleMutation.mutate({
+      date: scheduleData.date,
+      title: scheduleData.title,
+      memo: scheduleData.memo ?? "",
+    });
   };
 
   return (
