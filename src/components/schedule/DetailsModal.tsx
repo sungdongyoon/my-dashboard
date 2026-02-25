@@ -64,12 +64,24 @@ const DetailsModal = ({
   const [isUpdate, setIsUpdate] = useState<boolean>(false); // 일정 업데이트
   const [detailsInput, setDetailsInput] = useState<DetailsInputType | null>(
     detailsData,
-  );
+  ); // 일정 상세 정보
+
+  // 일정 삭제 함수
+  const handleDeleteSchedule = async () => {
+    if (confirm("일정을 삭제하시겠습니까?")) {
+      await supabaseClient
+        .from("schedules")
+        .delete()
+        .eq("id", detailsInput?.id);
+
+      alert("일정이 삭제되었습니다.");
+      setIsDetailsModal?.(false);
+      router.refresh();
+    }
+  };
 
   // update 스케줄 데이터
-  const handlePostSchedule = async (e: any) => {
-    e.preventDefault();
-
+  const handlePostSchedule = async () => {
     if (confirm("일정을 업데이트 하시겠습니까?")) {
       await supabaseClient
         .from("schedules")
@@ -86,8 +98,6 @@ const DetailsModal = ({
       router.refresh();
     }
   };
-
-  // console.log("detailsData", detailsInput);
 
   return (
     <Dialog
@@ -140,13 +150,14 @@ const DetailsModal = ({
             <Button variant="outline">닫기</Button>
           </DialogClose>
           {isUpdate === false ? (
-            <Button type="submit" onClick={() => setIsUpdate(true)}>
-              수정
-            </Button>
+            <>
+              <Button onClick={() => setIsUpdate(true)}>수정</Button>
+              <Button variant="destructive" onClick={handleDeleteSchedule}>
+                삭제
+              </Button>
+            </>
           ) : (
-            <Button type="submit" onClick={handlePostSchedule}>
-              저장
-            </Button>
+            <Button onClick={handlePostSchedule}>저장</Button>
           )}
         </DialogFooter>
       </DialogContent>
