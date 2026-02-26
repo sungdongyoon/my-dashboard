@@ -8,7 +8,7 @@ const Schedule = async () => {
 
   return (
     <div className="w-full h-full">
-      <ScheduleClient scheduleData={scheduleData} />
+      <ScheduleClient scheduleData={scheduleData} categoryData={categoryData} />
     </div>
   );
 };

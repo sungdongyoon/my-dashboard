@@ -22,11 +22,41 @@ interface DetailsType {
   category: string;
 }
 
-const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
+type CategoryMapType = {
+  name: string;
+  backgroundColor: string;
+  borderColor: string;
+  textColor: string;
+};
+
+const ScheduleClient = ({
+  scheduleData,
+  categoryData,
+}: {
+  scheduleData: any;
+  categoryData: any;
+}) => {
   const [isAddModal, setIsAddModal] = useState<boolean>(false); // [Add Modal] 스케줄 추가 모달
   const [isDetailsModal, setIsDetailsModal] = useState<boolean>(false); // [Details Modal] 스케줄 상세 정보 모달
   const [modalDate, setModalDate] = useState<Date | null>(null); // [Add Modal] 스케줄 추가 모달에 전달되는 날짜
   const [details, setDetails] = useState<DetailsType | null>(null); // [Details Modal] 스케줄 상세 정보
+
+  // 카테고리 데이터를 활용한 새로운 카테고리 맵
+  const categoryMap = new Map<string, CategoryMapType>(
+    (categoryData as CategoryMapType[]).map((el) => [el.name, el]),
+  );
+
+  // 카테고리 데이터가 적용된 새로운 스케줄 데이터(실제 달력에 적용할 스케줄 데이터)
+  const newScheduleData = scheduleData.map((el: { category: string }) => {
+    const matchedCategory = categoryMap.get(el.category);
+
+    return {
+      ...el,
+      backgroundColor: matchedCategory?.backgroundColor,
+      borderColor: matchedCategory?.borderColor,
+      textColor: matchedCategory?.textColor,
+    };
+  });
 
   // 날짜 클릭 함수
   const handleDateClick = (e: any) => {
@@ -39,7 +69,7 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
     // console.log("이벤트 id :", event._def.publicId);
     // console.log("이벤트 title :", event._def.title);
     // console.log("이벤트 props :", event._def.extendedProps);
-    // console.log("event", e.event);
+    console.log("event", e.event);
     setDetails({
       id: event._def.publicId,
       title: event._def.title,
@@ -56,7 +86,7 @@ const ScheduleClient = ({ scheduleData }: { scheduleData: any }) => {
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        events={scheduleData}
+        events={newScheduleData}
         // dateClick={handleDateClick}
         eventClick={handleEventClick}
         dayCellContent={(info) => {

@@ -45,6 +45,7 @@ interface ScheduleType {
   date: string;
   title: string;
   memo?: string;
+  cateogry: string;
 }
 
 const AddModal = ({
@@ -65,6 +66,7 @@ const AddModal = ({
     date: dateStr,
     title: "",
     memo: "",
+    cateogry: "",
   });
 
   /* 커스텀 훅 */
@@ -90,6 +92,7 @@ const AddModal = ({
         date: scheduleData.date,
         title: scheduleData.title,
         memo: scheduleData.memo ?? "",
+        category: scheduleData.cateogry,
       },
       {
         onSuccess: () => {
@@ -131,15 +134,21 @@ const AddModal = ({
             <div className="flex gap-1 items-center">
               <Label htmlFor="category">카테고리</Label>
             </div>
-            <Select>
+            <Select
+              onValueChange={(value) =>
+                setScheduleData({ ...scheduleData, cateogry: value })
+              }
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="카테고리" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
+                  {categoryData?.map((el: { id: string; name: string }) => (
+                    <SelectItem key={el.id} value={el.name}>
+                      {el.name}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>

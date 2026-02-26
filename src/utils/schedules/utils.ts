@@ -19,10 +19,12 @@ export const apiPostScheduleData = async ({
   date,
   title,
   memo,
+  category,
 }: {
   date: string;
   title: string;
   memo: string;
+  category: string;
 }) => {
   const supabase = await createClient();
 
@@ -31,6 +33,7 @@ export const apiPostScheduleData = async ({
       date: date,
       title: title,
       memo: memo,
+      category: category,
     },
   ]);
 };
