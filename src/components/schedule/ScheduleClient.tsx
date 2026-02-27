@@ -11,6 +11,7 @@ import { IoAddCircle } from "react-icons/io5";
 
 import AddModal from "@/src/components/schedule/AddModal";
 import DetailsModal from "./DetailsModal";
+import CategoryModal from "./CategoryModal";
 
 interface DetailsType {
   id: string;
@@ -38,6 +39,7 @@ const ScheduleClient = ({
 }) => {
   const [isAddModal, setIsAddModal] = useState<boolean>(false); // [Add Modal] 스케줄 추가 모달
   const [isDetailsModal, setIsDetailsModal] = useState<boolean>(false); // [Details Modal] 스케줄 상세 정보 모달
+  const [isCategoryModal, setIsCategoryModal] = useState<boolean>(false); // [Category modal] 카테고리 추가 모달
   const [modalDate, setModalDate] = useState<Date | null>(null); // [Add Modal] 스케줄 추가 모달에 전달되는 날짜
   const [details, setDetails] = useState<DetailsType | null>(null); // [Details Modal] 스케줄 상세 정보
 
@@ -89,6 +91,16 @@ const ScheduleClient = ({
         events={newScheduleData}
         // dateClick={handleDateClick}
         eventClick={handleEventClick}
+        headerToolbar={{ end: "category today prev,next" }}
+        customButtons={{
+          category: {
+            text: "category",
+            click: () => {
+              console.log("test category!");
+              setIsCategoryModal(true);
+            },
+          },
+        }}
         dayCellContent={(info) => {
           return (
             <div className="w-full group flex justify-between">
@@ -125,6 +137,7 @@ const ScheduleClient = ({
           detailsData={details}
         />
       )}
+      {isCategoryModal && <CategoryModal />}
     </>
   );
 };
