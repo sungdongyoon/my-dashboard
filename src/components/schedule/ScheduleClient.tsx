@@ -71,7 +71,7 @@ const ScheduleClient = ({
     // console.log("이벤트 id :", event._def.publicId);
     // console.log("이벤트 title :", event._def.title);
     // console.log("이벤트 props :", event._def.extendedProps);
-    console.log("event", e.event);
+    // console.log("event", e.event);
     setDetails({
       id: event._def.publicId,
       title: event._def.title,
@@ -96,7 +96,6 @@ const ScheduleClient = ({
           category: {
             text: "category",
             click: () => {
-              console.log("test category!");
               setIsCategoryModal(true);
             },
           },
@@ -137,7 +136,13 @@ const ScheduleClient = ({
           detailsData={details}
         />
       )}
-      {isCategoryModal && <CategoryModal />}
+      {isCategoryModal && (
+        <CategoryModal
+          triggerVisible={false}
+          isCategoryModal={isCategoryModal}
+          setIsCategoryModal={setIsCategoryModal}
+        />
+      )}
     </>
   );
 };

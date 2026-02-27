@@ -1,6 +1,6 @@
 import { createClient } from "../supabase/client";
 
-// [get] 스케줄 데이터
+// [get] 카테고리 데이터
 export const apiGetCategoryData = async () => {
   const supabase = await createClient();
 
@@ -12,4 +12,26 @@ export const apiGetCategoryData = async () => {
   }
 
   return data;
+};
+
+// [post] 카테고리 데이터
+export const apiPostCategoryData = async ({
+  name,
+  textColor,
+  backgroundColor,
+}: {
+  name: string;
+  textColor: string;
+  backgroundColor: string;
+}) => {
+  const supabase = await createClient();
+
+  await supabase.from("categories").insert([
+    {
+      name: name,
+      textColor: textColor,
+      backgroundColor: backgroundColor,
+      borderColor: backgroundColor,
+    },
+  ]);
 };
