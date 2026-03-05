@@ -35,3 +35,10 @@ export const apiPostCategoryData = async ({
     },
   ]);
 };
+
+// [delete] 카테고리 데이터
+export const apiDeleteCategoryData = async ({ id }: { id: string }) => {
+  const supabase = await createClient();
+
+  await supabase.from("categories").delete().eq("id", id);
+};

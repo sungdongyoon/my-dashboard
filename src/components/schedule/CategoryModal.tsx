@@ -23,12 +23,18 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { usePostCategory } from "@/src/hooks/mutations/useCategoryMutation";
+import {
+  useDeleteCategory,
+  usePostCategory,
+} from "@/src/hooks/mutations/useCategoryMutation";
+import { IoTrashOutline } from "react-icons/io5";
+import { PiNotePencil } from "react-icons/pi";
 
 interface CategoryModalType {
   className?: string;
   triggerVisible?: boolean;
   isCategoryModal?: boolean;
+  categoryData: any;
   setIsCategoryModal?: (payload: boolean) => void;
 }
 
@@ -41,19 +47,14 @@ interface CategoryDataType {
 const CategoryModal = ({
   className,
   triggerVisible,
+  categoryData,
   isCategoryModal,
   setIsCategoryModal,
 }: CategoryModalType) => {
-  /* hooks */
-  const [categoryData, setCategoryData] = useState<CategoryDataType>({
-    name: "",
-    textColor: "",
-    backgroundColor: "",
-  });
-
   /* 커스텀 훅 */
   const router = useRouter(); // 라우터
   const postCategory = usePostCategory(); // 카테고리 추가 뮤테이션
+  const deleteCategory = useDeleteCategory();
 
   /* [post] 카테고리 데이터 */
   const handlePostCategory = async () => {
@@ -73,6 +74,23 @@ const CategoryModal = ({
     );
   };
 
+  /* [delete] 카테고리 데이터 */
+  const handleDeleteCategory = async (categoryId: string) => {
+    if (confirm("카테고리를 삭제하시겠습니까?")) {
+      deleteCategory.mutate(
+        {
+          id: categoryId,
+        },
+        {
+          onSuccess: () => {
+            alert("일정이 삭제되었습니다!");
+            router.refresh();
+          },
+        },
+      );
+    }
+  };
+
   return (
     <Dialog
       open={isCategoryModal}
@@ -80,79 +98,54 @@ const CategoryModal = ({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>카테고리 추가</DialogTitle>
+          <DialogTitle>카테고리 관리</DialogTitle>
         </DialogHeader>
-        <FieldGroup>
-          <Field>
-            <Label htmlFor="categoryName">이름</Label>
-            <Input
-              id="categoryName"
-              name="categoryName"
-              placeholder="카테고리 이름을 입력해주세요."
-              value={categoryData.name}
-              onChange={(
-                e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
-              ) => setCategoryData({ ...categoryData, name: e.target.value })}
-            />
-          </Field>
-          <Field>
-            <div className="flex gap-1 items-center">
-              <Label htmlFor="textColor">텍스트 색상</Label>
-            </div>
-            <Select
-              onValueChange={(value) =>
-                setCategoryData({ ...categoryData, textColor: value })
-              }
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="카테고리" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="white">White</SelectItem>
-                  <SelectItem value="black">Black</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field>
-            <Label htmlFor="backgroundColor">배경 색상</Label>
-            <RadioGroup
-              defaultValue="comfortable"
-              className="w-fit"
-              onValueChange={(value) =>
-                setCategoryData({ ...categoryData, backgroundColor: value })
-              }
-            >
-              <div className="flex items-center gap-3">
-                <RadioGroupItem value="red" id="red" />
-                <Label htmlFor="red">Red</Label>
+        <ul className="flex flex-col">
+          {categoryData.map(
+            (el: {
+              name: string;
+              id: string;
+              backgroundColor: string;
+              textColor: string;
+            }) => (
+              <div
+                key={el.id}
+                className="flex gap-3 items-center justify-between p-2 rounded-lg hover:bg-gray-100 group"
+              >
+                <div className="flex gap-3 items-center">
+                  <div className="flex w-[20px] h-[20px] rounded-full">
+                    <div
+                      className="w-full h-full rounded-s-lg"
+                      style={{ backgroundColor: el.backgroundColor }}
+                    ></div>
+                    <div
+                      className="w-full h-full rounded-e-lg"
+                      style={{ backgroundColor: el.textColor }}
+                    ></div>
+                  </div>
+                  <li className="font-medium borders ">{el.name}</li>
+                </div>
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100">
+                  <div className="text-[1rem] cursor-pointer hover:text-blue-500">
+                    <PiNotePencil />
+                  </div>
+                  <div
+                    className="text-[1rem] cursor-pointer hover:text-red-500"
+                    onClick={() => handleDeleteCategory(el.id)}
+                  >
+                    <IoTrashOutline />
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <RadioGroupItem value="blue" id="blue" />
-                <Label htmlFor="blue">Blue</Label>
-              </div>
-              <div className="flex items-center gap-3">
-                <RadioGroupItem value="green" id="green" />
-                <Label htmlFor="green">Green</Label>
-              </div>
-              <div className="flex items-center gap-3">
-                <RadioGroupItem value="orange" id="orange" />
-                <Label htmlFor="orange">Orange</Label>
-              </div>
-              <div className="flex items-center gap-3">
-                <RadioGroupItem value="gray" id="gray" />
-                <Label htmlFor="gray">Gray</Label>
-              </div>
-            </RadioGroup>
-          </Field>
-        </FieldGroup>
+            ),
+          )}
+        </ul>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">닫기</Button>
           </DialogClose>
           <Button type="submit" onClick={handlePostCategory}>
-            저장
+            카테고리 추가
           </Button>
         </DialogFooter>
       </DialogContent>

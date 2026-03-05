@@ -94,7 +94,7 @@ const ScheduleClient = ({
         headerToolbar={{ end: "category today prev,next" }}
         customButtons={{
           category: {
-            text: "category",
+            text: "카테고리 관리",
             click: () => {
               setIsCategoryModal(true);
             },
@@ -139,6 +139,7 @@ const ScheduleClient = ({
       {isCategoryModal && (
         <CategoryModal
           triggerVisible={false}
+          categoryData={categoryData}
           isCategoryModal={isCategoryModal}
           setIsCategoryModal={setIsCategoryModal}
         />
