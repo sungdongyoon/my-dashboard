@@ -28,12 +28,30 @@ export const apiPostCategoryData = async ({
 
   await supabase.from("categories").insert([
     {
-      name: name,
-      textColor: textColor,
-      backgroundColor: backgroundColor,
+      name,
+      textColor,
+      backgroundColor,
       borderColor: backgroundColor,
     },
   ]);
+};
+
+// [update] 카테고리 데이터
+export const apiUpdateCategoryData = async ({
+  id,
+  name,
+}: {
+  id: string;
+  name: string;
+}) => {
+  const supabase = await createClient();
+
+  await supabase
+    .from("categories")
+    .update({
+      name,
+    })
+    .eq("id", id);
 };
 
 // [delete] 카테고리 데이터
