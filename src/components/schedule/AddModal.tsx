@@ -31,6 +31,9 @@ import { IoAddCircle } from "react-icons/io5";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { usePostSchedule } from "@/src/hooks/mutations/useScheduleMutations";
+import { formatDateToISO, formatDateToKorean } from "@/src/utils/common";
+import { Badge } from "../ui/badge";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 interface AddModalType {
   className?: string;
@@ -55,15 +58,14 @@ const AddModal = ({
   isAddModal,
   setIsAddModal,
 }: AddModalType) => {
-  const dateStr = date
-    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
-    : ""; // 날짜 string으로 변환
+  const dateISO = formatDateToISO(date);
+  const dateKorean = formatDateToKorean(date);
 
   const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden; // 트리거 hidden or visible
 
   /* hooks */
   const [scheduleData, setScheduleData] = useState<ScheduleType>({
-    date: dateStr,
+    date: dateISO,
     title: "",
     memo: "",
     cateogry: "",
@@ -87,6 +89,14 @@ const AddModal = ({
 
   /* [post] 스케줄 데이터 */
   const handlePostSchedule = async () => {
+    if (!scheduleData.title) {
+      alert("할 일을 입력해주세요!");
+      return;
+    } else if (!scheduleData.cateogry) {
+      alert("카테고리를 선택해주세요!");
+      return;
+    }
+
     postSchedule.mutate(
       {
         date: scheduleData.date,
@@ -104,6 +114,9 @@ const AddModal = ({
     );
   };
 
+  console.log("schedule", scheduleData);
+  console.log("ca", categoryData);
+
   return (
     <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
       <TriggerWrapper>
@@ -114,16 +127,17 @@ const AddModal = ({
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle>{dateStr}</DialogTitle>
+            <DialogTitle className="text-[1.2rem]">{dateKorean}</DialogTitle>
           </div>
         </DialogHeader>
         <FieldGroup>
           <Field>
-            <Label htmlFor="title">제목</Label>
-            <Input
+            <Label htmlFor="title">제목 *</Label>
+            <input
               id="title"
               name="title"
-              placeholder="할 일을 입력해주세요."
+              placeholder="할 일을 입력해주세요"
+              className="border-b-1 py-1 px-2 text-[0.8rem]"
               value={scheduleData?.title}
               onChange={(e) =>
                 setScheduleData({ ...scheduleData, title: e.target.value })
@@ -132,14 +146,43 @@ const AddModal = ({
           </Field>
           <Field>
             <div className="flex gap-1 items-center">
-              <Label htmlFor="category">카테고리</Label>
+              <Label htmlFor="category">카테고리 *</Label>
             </div>
-            <Select
+            <RadioGroup
+              className="flex gap-1"
+              value={scheduleData.cateogry ?? ""}
               onValueChange={(value) =>
                 setScheduleData({ ...scheduleData, cateogry: value })
               }
             >
-              <SelectTrigger className="w-[180px]">
+              {categoryData?.map(
+                (el: {
+                  id: string;
+                  name: string;
+                  textColor: string;
+                  backgroundColor: string;
+                }) => (
+                  <label key={el.id}>
+                    <RadioGroupItem value={el.name} className="peer sr-only" />
+                    <Badge
+                      style={{
+                        color: el.textColor,
+                        backgroundColor: el.backgroundColor,
+                      }}
+                      className="cursor-pointer opacity-30 peer-data-[state=checked]:opacity-100"
+                    >
+                      {el.name}
+                    </Badge>
+                  </label>
+                ),
+              )}
+            </RadioGroup>
+            {/* <Select
+              onValueChange={(value) =>
+                setScheduleData({ ...scheduleData, cateogry: value })
+              }
+            >
+              <SelectTrigger className="w-[180px] border-none bg-white">
                 <SelectValue placeholder="카테고리" />
               </SelectTrigger>
               <SelectContent>
@@ -151,18 +194,27 @@ const AddModal = ({
                   ))}
                 </SelectGroup>
               </SelectContent>
-            </Select>
+            </Select> */}
           </Field>
           <Field>
             <Label htmlFor="memo">메모</Label>
-            <Textarea
+            <textarea
+              id="memo"
+              name="memo"
+              className="border rounded-sm py-1 px-2 text-[0.8rem]"
+              value={scheduleData?.memo}
+              onChange={(e) =>
+                setScheduleData({ ...scheduleData, memo: e.target.value })
+              }
+            />
+            {/* <Textarea
               id="memo"
               name="memo"
               value={scheduleData?.memo}
               onChange={(e) =>
                 setScheduleData({ ...scheduleData, memo: e.target.value })
               }
-            />
+            /> */}
           </Field>
         </FieldGroup>
         <DialogFooter>
