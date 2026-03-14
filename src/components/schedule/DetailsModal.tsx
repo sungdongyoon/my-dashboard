@@ -25,6 +25,7 @@ import {
   formatDateToISO,
   formatDateToKorean,
 } from "@/src/utils/common";
+import { Badge } from "../ui/badge";
 
 interface DetailsModalType {
   className?: string;
@@ -47,6 +48,7 @@ interface DetailsInputType {
   title: string;
   props: {
     memo?: string;
+    category?: string;
   };
   date: Date;
   dateStr: string;
@@ -134,9 +136,14 @@ const DetailsModal = ({
         <DialogHeader>
           <div className="flex items-center justify-between">
             {isUpdate === false ? (
-              <DialogTitle className="text-[1.4rem]">
-                {detailsInput?.title}
-              </DialogTitle>
+              <div>
+                <span className="text-[0.8rem] text-gray-500">
+                  {detailsInput?.props.category}
+                </span>
+                <DialogTitle className="text-[1.4rem]">
+                  {detailsInput?.title}
+                </DialogTitle>
+              </div>
             ) : (
               <Input
                 type="text"
@@ -152,15 +159,15 @@ const DetailsModal = ({
         </DialogHeader>
         <div className="flex items-center gap-1">
           <IoCalendar className="text-gray-500" />
-          <span className="text-gray-500 text-[0.9rem]">{dateDot}</span>
+          <span className="text-gray-500 text-[0.8rem]">{dateDot}</span>
         </div>
         {isUpdate === false ? (
           detailsInput?.props.memo ? (
-            <p className="text-[0.8rem] text-gray-400">
+            <p className="text-[0.9rem] text-gray-400">
               {detailsInput?.props?.memo}
             </p>
           ) : (
-            <span className="text-[0.8rem] text-gray-400">
+            <span className="text-[0.9rem] text-gray-400">
               등록된 메모가 없습니다.
             </span>
           )
