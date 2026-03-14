@@ -19,7 +19,8 @@ interface DetailsType {
   props: {
     memo?: string;
   };
-  date: string;
+  date: Date;
+  dateStr: string;
   category: string;
 }
 
@@ -76,7 +77,8 @@ const ScheduleClient = ({
       id: event._def.publicId,
       title: event._def.title,
       props: event._def.extendedProps,
-      date: e.event.startStr,
+      date: event.start,
+      dateStr: event.startStr,
       category: "",
     });
 

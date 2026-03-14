@@ -14,12 +14,17 @@ import {
 } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { IoAddCircle } from "react-icons/io5";
+import { IoAddCircle, IoCalendar } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import {
   useDeleteSchedule,
   useUpdateSchedule,
 } from "@/src/hooks/mutations/useScheduleMutations";
+import {
+  formatDateToDot,
+  formatDateToISO,
+  formatDateToKorean,
+} from "@/src/utils/common";
 
 interface DetailsModalType {
   className?: string;
@@ -28,7 +33,8 @@ interface DetailsModalType {
   setIsDetailsModal?: (payload: boolean) => void;
   detailsData: {
     id: string;
-    date: string;
+    date: Date;
+    dateStr: string;
     title: string;
     props: {
       memo?: string;
@@ -42,7 +48,8 @@ interface DetailsInputType {
   props: {
     memo?: string;
   };
-  date: string;
+  date: Date;
+  dateStr: string;
 }
 
 const DetailsModal = ({
@@ -65,13 +72,17 @@ const DetailsModal = ({
   const updateSchedule = useUpdateSchedule(); // 일정 업데이트 뮤테이션
   const deleteSchedule = useDeleteSchedule(); // 일정 삭제 뮤테이션
 
+  const dateISO = formatDateToISO(detailsInput?.date ?? null);
+  const dateKorean = formatDateToKorean(detailsInput?.date ?? null);
+  const dateDot = formatDateToDot(detailsInput?.date ?? null);
+
   /* [update] 스케줄 데이터 */
   const handlePostSchedule = async () => {
     if (confirm("일정을 업데이트 하시겠습니까?")) {
       updateSchedule.mutate(
         {
           id: detailsInput?.id ?? "",
-          date: detailsInput?.date ?? "",
+          date: detailsInput?.dateStr ?? "",
           title: detailsInput?.title ?? "",
           memo: detailsInput?.props.memo ?? "",
         },
@@ -107,6 +118,8 @@ const DetailsModal = ({
     }
   };
 
+  console.log("test", detailsInput);
+
   return (
     <Dialog
       open={isDetailsModal}
@@ -121,7 +134,9 @@ const DetailsModal = ({
         <DialogHeader>
           <div className="flex items-center justify-between">
             {isUpdate === false ? (
-              <DialogTitle>{detailsInput?.title}</DialogTitle>
+              <DialogTitle className="text-[1.4rem]">
+                {detailsInput?.title}
+              </DialogTitle>
             ) : (
               <Input
                 type="text"
@@ -135,9 +150,20 @@ const DetailsModal = ({
             )}
           </div>
         </DialogHeader>
-        <div>{detailsInput?.date}</div>
+        <div className="flex items-center gap-1">
+          <IoCalendar className="text-gray-500" />
+          <span className="text-gray-500 text-[0.9rem]">{dateDot}</span>
+        </div>
         {isUpdate === false ? (
-          <div>{detailsInput?.props?.memo}</div>
+          detailsInput?.props.memo ? (
+            <p className="text-[0.8rem] text-gray-400">
+              {detailsInput?.props?.memo}
+            </p>
+          ) : (
+            <span className="text-[0.8rem] text-gray-400">
+              등록된 메모가 없습니다.
+            </span>
+          )
         ) : (
           <Input
             type="text"

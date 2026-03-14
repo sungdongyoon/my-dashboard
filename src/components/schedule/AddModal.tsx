@@ -1,28 +1,17 @@
 "use client";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
 import { Button } from "@/src/components/ui/button";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/src/components/ui/dialog";
 import { Field, FieldGroup } from "@/src/components/ui/field";
-import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
-import { Textarea } from "@/src/components/ui/textarea";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useRouter } from "next/navigation";
 
@@ -114,9 +103,6 @@ const AddModal = ({
     );
   };
 
-  console.log("schedule", scheduleData);
-  console.log("ca", categoryData);
-
   return (
     <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
       <TriggerWrapper>
@@ -169,7 +155,7 @@ const AddModal = ({
                         color: el.textColor,
                         backgroundColor: el.backgroundColor,
                       }}
-                      className="cursor-pointer opacity-30 peer-data-[state=checked]:opacity-100"
+                      className="cursor-pointer opacity-30 transition duration-300 peer-data-[state=checked]:opacity-100 hover:opacity-100"
                     >
                       {el.name}
                     </Badge>
@@ -177,24 +163,6 @@ const AddModal = ({
                 ),
               )}
             </RadioGroup>
-            {/* <Select
-              onValueChange={(value) =>
-                setScheduleData({ ...scheduleData, cateogry: value })
-              }
-            >
-              <SelectTrigger className="w-[180px] border-none bg-white">
-                <SelectValue placeholder="카테고리" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {categoryData?.map((el: { id: string; name: string }) => (
-                    <SelectItem key={el.id} value={el.name}>
-                      {el.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select> */}
           </Field>
           <Field>
             <Label htmlFor="memo">메모</Label>
@@ -207,14 +175,6 @@ const AddModal = ({
                 setScheduleData({ ...scheduleData, memo: e.target.value })
               }
             />
-            {/* <Textarea
-              id="memo"
-              name="memo"
-              value={scheduleData?.memo}
-              onChange={(e) =>
-                setScheduleData({ ...scheduleData, memo: e.target.value })
-              }
-            /> */}
           </Field>
         </FieldGroup>
         <DialogFooter>
