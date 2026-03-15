@@ -26,6 +26,8 @@ import {
   formatDateToKorean,
 } from "@/src/utils/common";
 import { Badge } from "../ui/badge";
+import { Label } from "../ui/label";
+import { Field, FieldGroup } from "../ui/field";
 
 interface DetailsModalType {
   className?: string;
@@ -134,71 +136,96 @@ const DetailsModal = ({
       </TriggerWrapper>
       <DialogContent showCloseButton={false}>
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            {isUpdate === false ? (
-              <div>
-                <span className="text-[0.8rem] text-gray-500">
-                  {detailsInput?.props.category}
-                </span>
-                <DialogTitle className="text-[1.4rem]">
-                  {detailsInput?.title}
-                </DialogTitle>
-              </div>
-            ) : (
-              <Input
-                type="text"
-                value={detailsInput?.title}
-                onChange={(e) =>
-                  detailsInput &&
-                  setDetailsInput({ ...detailsInput, title: e.target.value })
-                }
-                placeholder="제목을 입력해주세요."
-              />
-            )}
-          </div>
-        </DialogHeader>
-        <div className="flex items-center gap-1">
-          <IoCalendar className="text-gray-500" />
-          <span className="text-gray-500 text-[0.8rem]">{dateDot}</span>
-        </div>
-        {isUpdate === false ? (
-          detailsInput?.props.memo ? (
-            <p className="text-[0.9rem] text-gray-400">
-              {detailsInput?.props?.memo}
-            </p>
+          {isUpdate ? (
+            <DialogTitle className="text-[1.2rem]">{dateKorean}</DialogTitle>
           ) : (
-            <span className="text-[0.9rem] text-gray-400">
-              등록된 메모가 없습니다.
-            </span>
-          )
-        ) : (
-          <Input
-            type="text"
-            value={detailsInput?.props?.memo}
-            onChange={(e) =>
-              detailsInput &&
-              setDetailsInput({
-                ...detailsInput,
-                props: { memo: e.target.value },
-              })
-            }
-            placeholder="제목을 입력해주세요."
-          />
-        )}
-
+            <>
+              <span className="text-[0.8rem] text-gray-500">
+                {detailsInput?.props.category}
+              </span>
+              <DialogTitle className="text-[1.4rem]">
+                {detailsInput?.title}
+              </DialogTitle>
+            </>
+          )}
+        </DialogHeader>
+        <FieldGroup>
+          {isUpdate ? (
+            <>
+              <Field>
+                <Label htmlFor="title">제목</Label>
+                <input
+                  id="title"
+                  type="text"
+                  value={detailsInput?.title}
+                  className="w-full border-b-1 py-1 px-2 text-[0.8rem]"
+                  onChange={(e) =>
+                    detailsInput &&
+                    setDetailsInput({
+                      ...detailsInput,
+                      title: e.target.value,
+                    })
+                  }
+                  placeholder="제목을 입력해주세요."
+                />
+              </Field>
+              <Field>
+                <Label>메모</Label>
+                <input
+                  type="text"
+                  value={detailsInput?.props?.memo}
+                  className="w-full border-b-1 py-1 px-2 text-[0.8rem]"
+                  onChange={(e) =>
+                    detailsInput &&
+                    setDetailsInput({
+                      ...detailsInput,
+                      props: { memo: e.target.value },
+                    })
+                  }
+                  placeholder="제목을 입력해주세요."
+                />
+              </Field>
+            </>
+          ) : (
+            <>
+              <Field>
+                <div className="flex items-center gap-1">
+                  <IoCalendar className="text-gray-500" />
+                  <span className="text-gray-500 text-[0.8rem]">{dateDot}</span>
+                </div>
+              </Field>
+              <Field>
+                {detailsInput?.props.memo ? (
+                  <p className="text-[0.9rem] text-gray-400">
+                    {detailsInput?.props?.memo}
+                  </p>
+                ) : (
+                  <span className="text-[0.9rem] text-gray-400">
+                    등록된 메모가 없습니다.
+                  </span>
+                )}
+              </Field>
+            </>
+          )}
+        </FieldGroup>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">닫기</Button>
-          </DialogClose>
           {isUpdate === false ? (
             <>
+              <DialogClose asChild>
+                <Button variant="outline">닫기</Button>
+              </DialogClose>
               <Button onClick={() => setIsUpdate(true)}>수정</Button>
               <Button variant="destructive" onClick={handleDeleteSchedule}>
                 삭제
               </Button>
             </>
           ) : (
-            <Button onClick={handlePostSchedule}>저장</Button>
+            <>
+              <Button variant="outline" onClick={() => setIsUpdate(false)}>
+                뒤로가기
+              </Button>
+              <Button onClick={handlePostSchedule}>저장</Button>
+            </>
           )}
         </DialogFooter>
       </DialogContent>

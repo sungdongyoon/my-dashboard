@@ -23,6 +23,7 @@ import { usePostSchedule } from "@/src/hooks/mutations/useScheduleMutations";
 import { formatDateToISO, formatDateToKorean } from "@/src/utils/common";
 import { Badge } from "../ui/badge";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Spinner } from "../ui/spinner";
 
 interface AddModalType {
   className?: string;
@@ -103,6 +104,9 @@ const AddModal = ({
     );
   };
 
+  console.log("ca", categoryData);
+  console.log("lo", categoryLoading);
+
   return (
     <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
       <TriggerWrapper>
@@ -134,35 +138,47 @@ const AddModal = ({
             <div className="flex gap-1 items-center">
               <Label htmlFor="category">카테고리 *</Label>
             </div>
-            <RadioGroup
-              className="flex gap-1"
-              value={scheduleData.cateogry ?? ""}
-              onValueChange={(value) =>
-                setScheduleData({ ...scheduleData, cateogry: value })
-              }
-            >
-              {categoryData?.map(
-                (el: {
-                  id: string;
-                  name: string;
-                  textColor: string;
-                  backgroundColor: string;
-                }) => (
-                  <label key={el.id}>
-                    <RadioGroupItem value={el.name} className="peer sr-only" />
-                    <Badge
-                      style={{
-                        color: el.textColor,
-                        backgroundColor: el.backgroundColor,
-                      }}
-                      className="cursor-pointer opacity-30 transition duration-300 peer-data-[state=checked]:opacity-100 hover:opacity-100"
-                    >
-                      {el.name}
-                    </Badge>
-                  </label>
-                ),
-              )}
-            </RadioGroup>
+            {categoryLoading ? (
+              <div>
+                <Badge>
+                  <Spinner data-icon="inline-start" />
+                  loading
+                </Badge>
+              </div>
+            ) : (
+              <RadioGroup
+                className="flex gap-1"
+                value={scheduleData.cateogry ?? ""}
+                onValueChange={(value) =>
+                  setScheduleData({ ...scheduleData, cateogry: value })
+                }
+              >
+                {categoryData?.map(
+                  (el: {
+                    id: string;
+                    name: string;
+                    textColor: string;
+                    backgroundColor: string;
+                  }) => (
+                    <label key={el.id}>
+                      <RadioGroupItem
+                        value={el.name}
+                        className="peer sr-only"
+                      />
+                      <Badge
+                        style={{
+                          color: el.textColor,
+                          backgroundColor: el.backgroundColor,
+                        }}
+                        className="cursor-pointer opacity-30 transition duration-300 peer-data-[state=checked]:opacity-100 hover:opacity-100"
+                      >
+                        {el.name}
+                      </Badge>
+                    </label>
+                  ),
+                )}
+              </RadioGroup>
+            )}
           </Field>
           <Field>
             <Label htmlFor="memo">메모</Label>
