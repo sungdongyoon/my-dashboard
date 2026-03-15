@@ -57,6 +57,17 @@ const AddCategoryModal = ({
 
   /* [post] 카테고리 데이터 */
   const handlePostCategory = async () => {
+    if (!categoryData.name) {
+      alert("카테고리 이름을 입력해주세요!");
+      return;
+    } else if (!categoryData.textColor) {
+      alert("카테고리 텍스트 색상을 선택해주세요!");
+      return;
+    } else if (!categoryData.backgroundColor) {
+      alert("카테고리 배경 색상을 선택해주세요!");
+      return;
+    }
+
     postCategory.mutate(
       {
         name: categoryData.name,
@@ -78,17 +89,23 @@ const AddCategoryModal = ({
       open={isCategoryModal}
       onOpenChange={(open) => setIsCategoryModal?.(open)}
     >
-      <DialogContent>
+      <DialogContent showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>카테고리 추가</DialogTitle>
         </DialogHeader>
         <FieldGroup>
           <Field>
-            <Label htmlFor="categoryName">이름</Label>
-            <Input
+            <Label
+              htmlFor="categoryName"
+              className="font-semibold text-gray-500"
+            >
+              이름 *
+            </Label>
+            <input
               id="categoryName"
               name="categoryName"
               placeholder="카테고리 이름을 입력해주세요."
+              className="w-full border-b-1 py-1 px-2 text-[0.8rem]"
               value={categoryData.name}
               onChange={(
                 e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
@@ -97,26 +114,35 @@ const AddCategoryModal = ({
           </Field>
           <Field>
             <div className="flex gap-1 items-center">
-              <Label htmlFor="textColor">텍스트 색상</Label>
+              <Label
+                htmlFor="textColor"
+                className="font-semibold text-gray-500"
+              >
+                텍스트 색상 *
+              </Label>
             </div>
-            <Select
+            <RadioGroup
               onValueChange={(value) =>
                 setCategoryData({ ...categoryData, textColor: value })
               }
             >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="카테고리" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="white">White</SelectItem>
-                  <SelectItem value="black">Black</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              <div className="flex items-center gap-3">
+                <RadioGroupItem value="white" id="white" />
+                <Label htmlFor="white">White</Label>
+              </div>
+              <div className="flex items-center gap-3">
+                <RadioGroupItem value="black" id="black" />
+                <Label htmlFor="black">Black</Label>
+              </div>
+            </RadioGroup>
           </Field>
           <Field>
-            <Label htmlFor="backgroundColor">배경 색상</Label>
+            <Label
+              htmlFor="backgroundColor"
+              className="font-semibold text-gray-500"
+            >
+              배경 색상 *
+            </Label>
             <RadioGroup
               defaultValue="comfortable"
               className="w-fit"
@@ -149,7 +175,7 @@ const AddCategoryModal = ({
         </FieldGroup>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">닫기</Button>
+            <Button variant="outline">뒤로가기</Button>
           </DialogClose>
           <Button type="submit" onClick={handlePostCategory}>
             저장

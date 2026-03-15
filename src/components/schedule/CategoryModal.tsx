@@ -116,7 +116,7 @@ const CategoryModal = ({
         open={isCategoryModal}
         onOpenChange={(open) => setIsCategoryModal?.(open)}
       >
-        <DialogContent>
+        <DialogContent showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>카테고리 관리</DialogTitle>
           </DialogHeader>
@@ -143,12 +143,13 @@ const CategoryModal = ({
                         style={{ backgroundColor: el.textColor }}
                       ></div>
                     </div>
-                    <li className="font-medium">
+                    <li className="font-medium text-[0.8rem]">
                       {isUpdateCategory.state === true &&
                       isUpdateCategory.id === el.id ? (
-                        <Input
+                        <input
                           type="text"
                           placeholder="카테고리 이름을 입력해주세요"
+                          className="w-full border-b-1 pys-1 px-2 text-[0.8rem]"
                           value={isUpdateCategory.name}
                           onChange={(e) =>
                             setIsUpdateCategory({
@@ -165,7 +166,11 @@ const CategoryModal = ({
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100">
                     {isUpdateCategory.state === true &&
                     isUpdateCategory.id === el.id ? (
-                      <Button onClick={() => handleUpdateCategory(el.id)}>
+                      <Button
+                        size="xs"
+                        className="text-[0.6rem]"
+                        onClick={() => handleUpdateCategory(el.id)}
+                      >
                         저장
                       </Button>
                     ) : (

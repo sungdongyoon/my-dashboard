@@ -104,9 +104,6 @@ const AddModal = ({
     );
   };
 
-  console.log("ca", categoryData);
-  console.log("lo", categoryLoading);
-
   return (
     <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
       <TriggerWrapper>
@@ -122,7 +119,9 @@ const AddModal = ({
         </DialogHeader>
         <FieldGroup>
           <Field>
-            <Label htmlFor="title">제목 *</Label>
+            <Label htmlFor="title" className="font-semibold text-gray-500">
+              제목 *
+            </Label>
             <input
               id="title"
               name="title"
@@ -136,7 +135,9 @@ const AddModal = ({
           </Field>
           <Field>
             <div className="flex gap-1 items-center">
-              <Label htmlFor="category">카테고리 *</Label>
+              <Label htmlFor="category" className="font-semibold text-gray-500">
+                카테고리 *
+              </Label>
             </div>
             {categoryLoading ? (
               <div>
@@ -181,7 +182,9 @@ const AddModal = ({
             )}
           </Field>
           <Field>
-            <Label htmlFor="memo">메모</Label>
+            <Label htmlFor="memo" className="font-semibold text-gray-500">
+              메모
+            </Label>
             <textarea
               id="memo"
               name="memo"
