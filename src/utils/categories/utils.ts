@@ -40,9 +40,13 @@ export const apiPostCategoryData = async ({
 export const apiUpdateCategoryData = async ({
   id,
   name,
+  textColor,
+  backgroundColor,
 }: {
   id: string;
   name: string;
+  textColor: string;
+  backgroundColor: string;
 }) => {
   const supabase = await createClient();
 
@@ -50,6 +54,8 @@ export const apiUpdateCategoryData = async ({
     .from("categories")
     .update({
       name,
+      textColor,
+      backgroundColor,
     })
     .eq("id", id);
 };

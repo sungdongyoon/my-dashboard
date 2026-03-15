@@ -20,6 +20,15 @@ import {
 import { IoTrashOutline } from "react-icons/io5";
 import { PiNotePencil } from "react-icons/pi";
 import AddCategoryModal from "./AddCategoryModal";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 interface CategoryModalType {
   className?: string;
@@ -47,10 +56,14 @@ const CategoryModal = ({
   const [isUpdateCategory, setIsUpdateCategory] = useState<{
     id: string;
     name: string;
+    backgroundColor: string;
+    textColor: string;
     state: boolean;
   }>({
     id: "",
     name: "",
+    textColor: "",
+    backgroundColor: "",
     state: false,
   }); // 카테고리 업데이트 상태
 
@@ -63,15 +76,21 @@ const CategoryModal = ({
   const updateCategoryState = async ({
     id,
     name,
+    textColor,
+    backgroundColor,
     state,
   }: {
     id: string;
     name: string;
+    textColor: string;
+    backgroundColor: string;
     state: boolean;
   }) => {
     setIsUpdateCategory({
       id,
       name,
+      textColor,
+      backgroundColor,
       state,
     });
   };
@@ -82,6 +101,8 @@ const CategoryModal = ({
       {
         id: categoryId,
         name: isUpdateCategory.name,
+        textColor: isUpdateCategory.textColor,
+        backgroundColor: isUpdateCategory.backgroundColor,
       },
       {
         onSuccess: () => {
@@ -146,18 +167,61 @@ const CategoryModal = ({
                     <li className="font-medium text-[0.8rem]">
                       {isUpdateCategory.state === true &&
                       isUpdateCategory.id === el.id ? (
-                        <input
-                          type="text"
-                          placeholder="카테고리 이름을 입력해주세요"
-                          className="w-full border-b-1 pys-1 px-2 text-[0.8rem]"
-                          value={isUpdateCategory.name}
-                          onChange={(e) =>
-                            setIsUpdateCategory({
-                              ...isUpdateCategory,
-                              name: e.target.value,
-                            })
-                          }
-                        />
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="text"
+                            placeholder="카테고리 이름을 입력해주세요"
+                            className="w-full border-b-1 pys-1 px-2 text-[0.8rem]"
+                            value={isUpdateCategory.name}
+                            onChange={(e) =>
+                              setIsUpdateCategory({
+                                ...isUpdateCategory,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                          <Select
+                            onValueChange={(value) =>
+                              setIsUpdateCategory({
+                                ...isUpdateCategory,
+                                textColor: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="w-full max-w-48">
+                              <SelectValue placeholder={el.textColor} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>텍스트색</SelectLabel>
+                                <SelectItem value="white">White</SelectItem>
+                                <SelectItem value="black">Black</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          <Select
+                            onValueChange={(value) =>
+                              setIsUpdateCategory({
+                                ...isUpdateCategory,
+                                backgroundColor: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="w-full max-w-48">
+                              <SelectValue placeholder={el.backgroundColor} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>배경색</SelectLabel>
+                                <SelectItem value="white">Red</SelectItem>
+                                <SelectItem value="blue">Blue</SelectItem>
+                                <SelectItem value="green">Green</SelectItem>
+                                <SelectItem value="orange">Orange</SelectItem>
+                                <SelectItem value="gray">Gray</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
                       ) : (
                         el.name
                       )}
@@ -181,6 +245,8 @@ const CategoryModal = ({
                             updateCategoryState({
                               id: el.id,
                               name: el.name,
+                              textColor: el.textColor,
+                              backgroundColor: el.backgroundColor,
                               state: true,
                             })
                           }
