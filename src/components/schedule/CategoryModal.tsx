@@ -17,7 +17,11 @@ import {
   usePostCategory,
   useUpdateCategory,
 } from "@/src/hooks/mutations/useCategoryMutation";
-import { IoTrashOutline } from "react-icons/io5";
+import {
+  IoCloseCircle,
+  IoCloseCircleSharp,
+  IoTrashOutline,
+} from "react-icons/io5";
 import { PiNotePencil } from "react-icons/pi";
 import AddCategoryModal from "./AddCategoryModal";
 import {
@@ -230,13 +234,28 @@ const CategoryModal = ({
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100">
                     {isUpdateCategory.state === true &&
                     isUpdateCategory.id === el.id ? (
-                      <Button
-                        size="xs"
-                        className="text-[0.6rem]"
-                        onClick={() => handleUpdateCategory(el.id)}
-                      >
-                        저장
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          size="xs"
+                          variant="destructive"
+                          className="text-[0.6rem]"
+                          onClick={() =>
+                            setIsUpdateCategory({
+                              ...isUpdateCategory,
+                              state: false,
+                            })
+                          }
+                        >
+                          닫기
+                        </Button>
+                        <Button
+                          size="xs"
+                          className="text-[0.6rem]"
+                          onClick={() => handleUpdateCategory(el.id)}
+                        >
+                          저장
+                        </Button>
+                      </div>
                     ) : (
                       <>
                         <div
