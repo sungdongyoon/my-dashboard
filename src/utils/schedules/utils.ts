@@ -43,11 +43,13 @@ export const apiUpdateScheduleData = async ({
   id,
   date,
   title,
+  category,
   memo,
 }: {
   id: string;
   date: string;
   title: string;
+  category: string;
   memo: string;
 }) => {
   const supabase = await createClient();
@@ -57,6 +59,7 @@ export const apiUpdateScheduleData = async ({
     .update({
       date: date,
       title: title,
+      category: category,
       memo: memo,
     })
     .eq("id", id);

@@ -28,6 +28,10 @@ import {
 import { Badge } from "../ui/badge";
 import { Label } from "../ui/label";
 import { Field, FieldGroup } from "../ui/field";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { Spinner } from "../ui/spinner";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 interface DetailsModalType {
   className?: string;
@@ -41,6 +45,7 @@ interface DetailsModalType {
     title: string;
     props: {
       memo?: string;
+      category?: string;
     };
   } | null;
 }
@@ -76,9 +81,20 @@ const DetailsModal = ({
   const updateSchedule = useUpdateSchedule(); // 일정 업데이트 뮤테이션
   const deleteSchedule = useDeleteSchedule(); // 일정 삭제 뮤테이션
 
+  /* 날짜 변환 공통 함수 */
   const dateISO = formatDateToISO(detailsInput?.date ?? null);
   const dateKorean = formatDateToKorean(detailsInput?.date ?? null);
   const dateDot = formatDateToDot(detailsInput?.date ?? null);
+
+  /* 카테고리 데이터 */
+  const {
+    data: categoryData,
+    isLoading: categoryLoading,
+    error: categoryError,
+  } = useQuery({
+    queryKey: ["category"],
+    queryFn: () => axios.get("/api/categories").then((res) => res.data),
+  });
 
   /* [update] 스케줄 데이터 */
   const handlePostSchedule = async () => {
@@ -88,6 +104,7 @@ const DetailsModal = ({
           id: detailsInput?.id ?? "",
           date: detailsInput?.dateStr ?? "",
           title: detailsInput?.title ?? "",
+          category: detailsInput?.props.category ?? "",
           memo: detailsInput?.props.memo ?? "",
         },
         {
@@ -166,6 +183,57 @@ const DetailsModal = ({
                   }
                   placeholder="제목을 입력해주세요."
                 />
+              </Field>
+              <Field>
+                <Label htmlFor="category">카테고리</Label>
+                {categoryLoading ? (
+                  <div>
+                    <Badge>
+                      <Spinner data-icon="inline-start" />
+                      loading
+                    </Badge>
+                  </div>
+                ) : (
+                  <RadioGroup
+                    className="flex gap-1"
+                    value={detailsInput?.props.category ?? ""}
+                    onValueChange={(value: string) =>
+                      setDetailsInput((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              props: { ...prev.props, category: value },
+                            }
+                          : prev,
+                      )
+                    }
+                  >
+                    {categoryData?.map(
+                      (el: {
+                        id: string;
+                        name: string;
+                        textColor: string;
+                        backgroundColor: string;
+                      }) => (
+                        <label key={el.id}>
+                          <RadioGroupItem
+                            value={el.name}
+                            className="peer sr-only"
+                          />
+                          <Badge
+                            style={{
+                              color: el.textColor,
+                              backgroundColor: el.backgroundColor,
+                            }}
+                            className="cursor-pointer opacity-30 transition duration-300 peer-data-[state=checked]:opacity-100 hover:opacity-100"
+                          >
+                            {el.name}
+                          </Badge>
+                        </label>
+                      ),
+                    )}
+                  </RadioGroup>
+                )}
               </Field>
               <Field>
                 <Label>메모</Label>
