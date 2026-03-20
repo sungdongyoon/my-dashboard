@@ -55,7 +55,8 @@ interface DetailsInputType {
   title: string;
   props: {
     memo?: string;
-    category?: string;
+    categoryId?: string;
+    categoryName?: string;
   };
   date: Date;
   dateStr: string;
@@ -104,7 +105,8 @@ const DetailsModal = ({
           id: detailsInput?.id ?? "",
           date: detailsInput?.dateStr ?? "",
           title: detailsInput?.title ?? "",
-          category: detailsInput?.props.category ?? "",
+          categoryId: detailsInput?.props.categoryId ?? "",
+          categoryName: detailsInput?.props.categoryName ?? "",
           memo: detailsInput?.props.memo ?? "",
         },
         {
@@ -119,6 +121,8 @@ const DetailsModal = ({
       );
     }
   };
+
+  console.log("Da", detailsInput);
 
   /* [delete] 스케줄 데이터 */
   const handleDeleteSchedule = async () => {
@@ -156,7 +160,7 @@ const DetailsModal = ({
           ) : (
             <>
               <span className="text-[0.8rem] text-gray-500">
-                {detailsInput?.props.category}
+                {detailsInput?.props.categoryName}
               </span>
               <DialogTitle className="text-[1.4rem]">
                 {detailsInput?.title}
@@ -196,17 +200,25 @@ const DetailsModal = ({
                 ) : (
                   <RadioGroup
                     className="flex gap-1"
-                    value={detailsInput?.props.category ?? ""}
-                    onValueChange={(value: string) =>
+                    value={detailsInput?.props.categoryId ?? ""}
+                    onValueChange={(value: string) => {
+                      const selectedCategory = categoryData?.find(
+                        (el: { id: string }) => el.id === value,
+                      );
+
                       setDetailsInput((prev) =>
                         prev
                           ? {
                               ...prev,
-                              props: { ...prev.props, category: value },
+                              props: {
+                                ...prev.props,
+                                categoryId: selectedCategory.id,
+                                categoryName: selectedCategory.name,
+                              },
                             }
                           : prev,
-                      )
-                    }
+                      );
+                    }}
                   >
                     {categoryData?.map(
                       (el: {
@@ -217,7 +229,7 @@ const DetailsModal = ({
                       }) => (
                         <label key={el.id}>
                           <RadioGroupItem
-                            value={el.name}
+                            value={el.id}
                             className="peer sr-only"
                           />
                           <Badge

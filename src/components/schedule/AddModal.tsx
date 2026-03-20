@@ -38,7 +38,8 @@ interface ScheduleType {
   date: string;
   title: string;
   memo?: string;
-  cateogry: string;
+  cateogryId: string;
+  categoryName: string;
 }
 
 const AddModal = ({
@@ -58,7 +59,8 @@ const AddModal = ({
     date: dateISO,
     title: "",
     memo: "",
-    cateogry: "",
+    cateogryId: "",
+    categoryName: "",
   });
 
   /* 커스텀 훅 */
@@ -82,7 +84,7 @@ const AddModal = ({
     if (!scheduleData.title) {
       alert("할 일을 입력해주세요!");
       return;
-    } else if (!scheduleData.cateogry) {
+    } else if (!scheduleData.cateogryId) {
       alert("카테고리를 선택해주세요!");
       return;
     }
@@ -92,7 +94,8 @@ const AddModal = ({
         date: scheduleData.date,
         title: scheduleData.title,
         memo: scheduleData.memo ?? "",
-        category: scheduleData.cateogry,
+        categoryId: scheduleData.cateogryId,
+        categoryName: scheduleData.categoryName,
       },
       {
         onSuccess: () => {
@@ -149,10 +152,18 @@ const AddModal = ({
             ) : (
               <RadioGroup
                 className="flex gap-1"
-                value={scheduleData.cateogry ?? ""}
-                onValueChange={(value) =>
-                  setScheduleData({ ...scheduleData, cateogry: value })
-                }
+                value={scheduleData.cateogryId ?? ""}
+                onValueChange={(value) => {
+                  const selectedCategory = categoryData?.find(
+                    (el: { id: string }) => el.id === value,
+                  );
+
+                  setScheduleData({
+                    ...scheduleData,
+                    cateogryId: selectedCategory.id,
+                    categoryName: selectedCategory.name,
+                  });
+                }}
               >
                 {categoryData?.map(
                   (el: {
@@ -162,10 +173,7 @@ const AddModal = ({
                     backgroundColor: string;
                   }) => (
                     <label key={el.id}>
-                      <RadioGroupItem
-                        value={el.name}
-                        className="peer sr-only"
-                      />
+                      <RadioGroupItem value={el.id} className="peer sr-only" />
                       <Badge
                         style={{
                           color: el.textColor,

@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useDeleteSchedule } from "@/src/hooks/mutations/useScheduleMutations";
 
 interface CategoryModalType {
   className?: string;
@@ -75,6 +76,7 @@ const CategoryModal = ({
   const router = useRouter(); // 라우터
   const deleteCategory = useDeleteCategory(); // 카테고리 삭제 뮤테이션
   const updateCategory = useUpdateCategory(); // 카테고리 업데이트 뮤테이션
+  const deleteSchedule = useDeleteSchedule(); // 일정 삭제 뮤테이션
 
   /* 카테고리 상태 업데이트 */
   const updateCategoryState = async ({
@@ -132,6 +134,10 @@ const CategoryModal = ({
           },
         },
       );
+      // deleteSchedule.mutate({
+      //   id: "",
+      //   categoryId: categoryId,
+      // });
     }
   };
 

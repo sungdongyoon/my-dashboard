@@ -25,7 +25,7 @@ interface DetailsType {
 }
 
 type CategoryMapType = {
-  name: string;
+  id: string;
   backgroundColor: string;
   borderColor: string;
   textColor: string;
@@ -46,12 +46,12 @@ const ScheduleClient = ({
 
   // 카테고리 데이터를 활용한 새로운 카테고리 맵
   const categoryMap = new Map<string, CategoryMapType>(
-    (categoryData as CategoryMapType[]).map((el) => [el.name, el]),
+    (categoryData as CategoryMapType[]).map((el) => [el.id, el]),
   );
 
   // 카테고리 데이터가 적용된 새로운 스케줄 데이터(실제 달력에 적용할 스케줄 데이터)
-  const newScheduleData = scheduleData.map((el: { category: string }) => {
-    const matchedCategory = categoryMap.get(el.category);
+  const newScheduleData = scheduleData.map((el: { categoryId: string }) => {
+    const matchedCategory = categoryMap.get(el.categoryId);
 
     return {
       ...el,
@@ -60,6 +60,8 @@ const ScheduleClient = ({
       textColor: matchedCategory?.textColor,
     };
   });
+
+  console.log("new", newScheduleData);
 
   // 날짜 클릭 함수
   const handleDateClick = (e: any) => {

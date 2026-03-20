@@ -1,6 +1,9 @@
+import { apiGetScheduleData } from "@/src/utils/schedules/utils";
 import React from "react";
 
-const Home = () => {
+const Home = async () => {
+  const scheduleData = await apiGetScheduleData(); // 전체 스케줄 데이터
+
   return (
     <div className="w-full h-full grid grid-cols-3 gap-3">
       <div className="flex justify-center items-center border border-solid border-red-100 rounded-2xl">
