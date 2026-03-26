@@ -257,7 +257,7 @@ const DetailsModal = ({
                     detailsInput &&
                     setDetailsInput({
                       ...detailsInput,
-                      props: { memo: e.target.value },
+                      props: { ...detailsInput.props, memo: e.target.value },
                     })
                   }
                   placeholder="제목을 입력해주세요."

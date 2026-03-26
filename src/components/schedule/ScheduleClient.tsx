@@ -61,8 +61,6 @@ const ScheduleClient = ({
     };
   });
 
-  console.log("new", newScheduleData);
-
   // 날짜 클릭 함수
   const handleDateClick = (e: any) => {
     console.log("date", e);
