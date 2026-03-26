@@ -142,6 +142,8 @@ const DetailsModal = ({
     }
   };
 
+  console.log("test", detailsInput);
+
   return (
     <Dialog
       open={isDetailsModal}

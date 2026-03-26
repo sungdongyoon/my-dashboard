@@ -36,6 +36,8 @@ interface AddModalType {
 interface ScheduleType {
   // id: string;
   date: string;
+  start: string;
+  end: string;
   title: string;
   memo?: string;
   cateogryId: string;
@@ -57,6 +59,8 @@ const AddModal = ({
   /* hooks */
   const [scheduleData, setScheduleData] = useState<ScheduleType>({
     date: dateISO,
+    start: "",
+    end: "",
     title: "",
     memo: "",
     cateogryId: "",
@@ -91,8 +95,8 @@ const AddModal = ({
 
     postSchedule.mutate(
       {
-        start: scheduleData.date,
-        end: scheduleData.date,
+        start: scheduleData.start,
+        end: scheduleData.end,
         title: scheduleData.title,
         memo: scheduleData.memo ?? "",
         categoryId: scheduleData.cateogryId,
@@ -134,6 +138,31 @@ const AddModal = ({
               value={scheduleData?.title}
               onChange={(e) =>
                 setScheduleData({ ...scheduleData, title: e.target.value })
+              }
+            />
+          </Field>
+          <Field>
+            <Label htmlFor="date" className="font-semibold text-gray-500">
+              날짜 *
+            </Label>
+            <input
+              id="start"
+              name="date"
+              placeholder="시작일을 입력해주세요"
+              className="border-b-1 py-1 px-2 text-[0.8rem]"
+              value={scheduleData?.start}
+              onChange={(e) =>
+                setScheduleData({ ...scheduleData, start: e.target.value })
+              }
+            />
+            <input
+              id="end"
+              name="date"
+              placeholder="종료일을 입력해주세요"
+              className="border-b-1 py-1 px-2 text-[0.8rem]"
+              value={scheduleData?.end}
+              onChange={(e) =>
+                setScheduleData({ ...scheduleData, end: e.target.value })
               }
             />
           </Field>
