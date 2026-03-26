@@ -91,7 +91,8 @@ const AddModal = ({
 
     postSchedule.mutate(
       {
-        date: scheduleData.date,
+        start: scheduleData.date,
+        end: scheduleData.date,
         title: scheduleData.title,
         memo: scheduleData.memo ?? "",
         categoryId: scheduleData.cateogryId,

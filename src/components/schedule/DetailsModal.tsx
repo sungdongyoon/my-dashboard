@@ -103,7 +103,8 @@ const DetailsModal = ({
       updateSchedule.mutate(
         {
           id: detailsInput?.id ?? "",
-          date: detailsInput?.dateStr ?? "",
+          start: detailsInput?.dateStr ?? "",
+          end: detailsInput?.dateStr ?? "",
           title: detailsInput?.title ?? "",
           categoryId: detailsInput?.props.categoryId ?? "",
           categoryName: detailsInput?.props.categoryName ?? "",
@@ -121,8 +122,6 @@ const DetailsModal = ({
       );
     }
   };
-
-  console.log("Da", detailsInput);
 
   /* [delete] 스케줄 데이터 */
   const handleDeleteSchedule = async () => {

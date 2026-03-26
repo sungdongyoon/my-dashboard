@@ -16,13 +16,15 @@ export const apiGetScheduleData = async () => {
 
 // [post] 스케줄 데이터
 export const apiPostScheduleData = async ({
-  date,
+  start,
+  end,
   title,
   memo,
   categoryId,
   categoryName,
 }: {
-  date: string;
+  start: string;
+  end: string;
   title: string;
   memo: string;
   categoryId: string;
@@ -32,7 +34,8 @@ export const apiPostScheduleData = async ({
 
   await supabase.from("schedules").insert([
     {
-      date,
+      start,
+      end,
       title,
       memo,
       categoryId,
@@ -44,14 +47,16 @@ export const apiPostScheduleData = async ({
 // [update] 스케줄 데이터
 export const apiUpdateScheduleData = async ({
   id,
-  date,
+  start,
+  end,
   title,
   categoryId,
   categoryName,
   memo,
 }: {
   id: string;
-  date: string;
+  start: string;
+  end: string;
   title: string;
   categoryId: string;
   categoryName: string;
@@ -62,7 +67,8 @@ export const apiUpdateScheduleData = async ({
   await supabase
     .from("schedules")
     .update({
-      date,
+      start,
+      end,
       title,
       categoryId,
       categoryName,

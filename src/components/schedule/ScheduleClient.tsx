@@ -85,6 +85,9 @@ const ScheduleClient = ({
     setIsDetailsModal(true);
   };
 
+  console.log("스케줄", scheduleData);
+  console.log("new", newScheduleData);
+
   return (
     <>
       <FullCalendar
