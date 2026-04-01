@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/src/components/ui/dialog";
-import { Field, FieldGroup } from "@/src/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/src/components/ui/field";
 import { Label } from "@/src/components/ui/label";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useRouter } from "next/navigation";
@@ -24,6 +24,10 @@ import { formatDateToISO, formatDateToKorean } from "@/src/utils/common";
 import { Badge } from "../ui/badge";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Spinner } from "../ui/spinner";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
+import { Card, CardContent, CardFooter } from "../ui/card";
+import { startOfDay } from "date-fns";
 
 interface AddModalType {
   className?: string;
@@ -59,8 +63,8 @@ const AddModal = ({
   /* hooks */
   const [scheduleData, setScheduleData] = useState<ScheduleType>({
     date: dateISO,
-    start: "",
-    end: "",
+    start: dateISO,
+    end: dateISO,
     title: "",
     memo: "",
     cateogryId: "",
@@ -112,6 +116,8 @@ const AddModal = ({
     );
   };
 
+  console.log("scheduleData", scheduleData);
+
   return (
     <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
       <TriggerWrapper>
@@ -145,26 +151,74 @@ const AddModal = ({
             <Label htmlFor="date" className="font-semibold text-gray-500">
               날짜 *
             </Label>
-            <input
-              id="start"
-              name="date"
-              placeholder="시작일을 입력해주세요"
-              className="border-b-1 py-1 px-2 text-[0.8rem]"
-              value={scheduleData?.start}
-              onChange={(e) =>
-                setScheduleData({ ...scheduleData, start: e.target.value })
-              }
-            />
-            <input
-              id="end"
-              name="date"
-              placeholder="종료일을 입력해주세요"
-              className="border-b-1 py-1 px-2 text-[0.8rem]"
-              value={scheduleData?.end}
-              onChange={(e) =>
-                setScheduleData({ ...scheduleData, end: e.target.value })
-              }
-            />
+            <div className="flex gap-1 justify-between">
+              <Popover>
+                <PopoverTrigger asChild className="flex-1">
+                  <Button
+                    variant="outline"
+                    id="date-picker-simple"
+                    className="justify-start font-normal"
+                  >
+                    {scheduleData.start ? (
+                      scheduleData.start
+                    ) : (
+                      <span>시작일을 설정해주세요</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={new Date(scheduleData.start)}
+                    onSelect={(selected) => {
+                      if (!selected) return;
+                      setScheduleData((prev) => ({
+                        ...prev,
+                        start: formatDateToISO(selected),
+                        end:
+                          prev.end < formatDateToISO(selected)
+                            ? formatDateToISO(selected)
+                            : prev.end,
+                      }));
+                    }}
+                    defaultMonth={new Date(scheduleData.start)}
+                  />
+                </PopoverContent>
+              </Popover>
+              <Popover>
+                <PopoverTrigger asChild className="flex-1">
+                  <Button
+                    variant="outline"
+                    id="date-picker-simple"
+                    className="justify-start font-normal"
+                  >
+                    {scheduleData.end ? (
+                      scheduleData.end
+                    ) : (
+                      <span>종료일을 설정해주세요</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={new Date(scheduleData.end)}
+                    onSelect={(selected) => {
+                      if (!selected) return;
+                      setScheduleData((prev) => ({
+                        ...prev,
+                        end: formatDateToISO(selected),
+                      }));
+                    }}
+                    defaultMonth={new Date(scheduleData.end)}
+                    disabled={(date) =>
+                      startOfDay(date) <
+                      startOfDay(new Date(scheduleData.start))
+                    }
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </Field>
           <Field>
             <div className="flex gap-1 items-center">
