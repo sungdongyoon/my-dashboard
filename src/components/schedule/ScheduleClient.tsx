@@ -20,7 +20,11 @@ interface DetailsType {
     memo?: string;
   };
   date: Date;
+  start: Date;
+  end: Date;
   dateStr: string;
+  startStr: string;
+  endStr: string;
   category: string;
 }
 
@@ -78,7 +82,11 @@ const ScheduleClient = ({
       title: event._def.title,
       props: event._def.extendedProps,
       date: event.start,
+      start: event.start,
+      end: event.end,
       dateStr: event.startStr,
+      startStr: event.startStr,
+      endStr: event.endStr,
       category: "",
     });
 

@@ -41,7 +41,11 @@ interface DetailsModalType {
   detailsData: {
     id: string;
     date: Date;
+    start: Date;
+    end: Date;
     dateStr: string;
+    startStr: string;
+    endStr: string;
     title: string;
     props: {
       memo?: string;
@@ -59,7 +63,11 @@ interface DetailsInputType {
     categoryName?: string;
   };
   date: Date;
+  start: Date;
+  end: Date;
   dateStr: string;
+  startStr: string;
+  endStr: string;
 }
 
 const DetailsModal = ({
@@ -270,7 +278,12 @@ const DetailsModal = ({
               <Field>
                 <div className="flex items-center gap-1">
                   <IoCalendar className="text-gray-500" />
-                  <span className="text-gray-500 text-[0.8rem]">{dateDot}</span>
+                  <span className="text-gray-500 text-[0.8rem]">
+                    {formatDateToDot(detailsInput?.start ?? null)} ~
+                  </span>
+                  <span className="text-gray-500 text-[0.8rem]">
+                    {formatDateToDot(detailsInput?.end ?? null)}
+                  </span>
                 </div>
               </Field>
               <Field>
