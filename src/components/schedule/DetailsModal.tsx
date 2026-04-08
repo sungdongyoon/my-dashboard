@@ -32,6 +32,9 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Spinner } from "../ui/spinner";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
+import { startOfDay } from "date-fns";
 
 interface DetailsModalType {
   className?: string;
@@ -111,8 +114,8 @@ const DetailsModal = ({
       updateSchedule.mutate(
         {
           id: detailsInput?.id ?? "",
-          start: detailsInput?.dateStr ?? "",
-          end: detailsInput?.dateStr ?? "",
+          start: detailsInput?.startStr ?? "",
+          end: detailsInput?.endStr ?? "",
           title: detailsInput?.title ?? "",
           categoryId: detailsInput?.props.categoryId ?? "",
           categoryName: detailsInput?.props.categoryName ?? "",
@@ -150,7 +153,7 @@ const DetailsModal = ({
     }
   };
 
-  console.log("test", detailsInput);
+  console.log("de", detailsInput);
 
   return (
     <Dialog
@@ -196,6 +199,112 @@ const DetailsModal = ({
                   }
                   placeholder="제목을 입력해주세요."
                 />
+              </Field>
+              <Field>
+                <Label htmlFor="date" className="font-semibold text-gray-500">
+                  날짜 *
+                </Label>
+                <div className="flex gap-1 justify-between">
+                  <Popover>
+                    <PopoverTrigger asChild className="flex-1">
+                      <Button
+                        variant="outline"
+                        id="date-picker-simple"
+                        className="justify-start font-normal"
+                      >
+                        {detailsInput?.start
+                          ? formatDateToISO(detailsInput?.start)
+                          : "시작일을 설정해주세요"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-0 flex flex-row"
+                      align="start"
+                    >
+                      <Calendar
+                        mode="single"
+                        selected={detailsInput?.start}
+                        onSelect={(selected) => {
+                          if (!selected) return;
+                          setDetailsInput((prev) => {
+                            if (!prev) return prev;
+
+                            return {
+                              ...prev,
+                              start: selected,
+                              startStr: formatDateToISO(selected),
+                              end: prev.end < selected ? selected : prev.end,
+                              endStr: formatDateToISO(
+                                prev.end < selected ? selected : prev.end,
+                              ),
+                            };
+                          });
+                        }}
+                        defaultMonth={detailsInput?.start}
+                      />
+                      <div className="border-l flex flex-col">
+                        <div className="p-3 flex flex-col flex-1 gap-3 border-t">
+                          <Label>Start Time</Label>
+                          <Input type="time" defaultValue="10:00:00" />
+                        </div>
+                        <div className="p-3 flex flex-col flex-1 gap-3 border-t">
+                          <Label>End Time</Label>
+                          <Input type="time" defaultValue="11:00:00" />
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <Popover>
+                    <PopoverTrigger asChild className="flex-1">
+                      <Button
+                        variant="outline"
+                        id="date-picker-simple"
+                        className="justify-start font-normal"
+                      >
+                        {detailsInput?.end
+                          ? formatDateToISO(detailsInput?.end)
+                          : "종료일을 설정해주세요"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-0 flex flex-row"
+                      align="start"
+                    >
+                      <Calendar
+                        mode="single"
+                        selected={detailsInput?.end}
+                        onSelect={(selected) => {
+                          if (!selected) return;
+                          setDetailsInput((prev) => {
+                            if (!prev) return prev;
+
+                            return {
+                              ...prev,
+                              end: selected,
+                              endStr: formatDateToISO(selected),
+                            };
+                          });
+                        }}
+                        disabled={(date) =>
+                          detailsInput?.start
+                            ? startOfDay(date) < startOfDay(detailsInput.start)
+                            : false
+                        }
+                        defaultMonth={detailsInput?.end}
+                      />
+                      <div className="border-l flex flex-col">
+                        <div className="p-3 flex flex-col flex-1 gap-3 border-t">
+                          <Label>Start Time</Label>
+                          <Input type="time" defaultValue="10:00:00" />
+                        </div>
+                        <div className="p-3 flex flex-col flex-1 gap-3 border-t">
+                          <Label>End Time</Label>
+                          <Input type="time" defaultValue="11:00:00" />
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </Field>
               <Field>
                 <Label htmlFor="category">카테고리</Label>

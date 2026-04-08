@@ -93,6 +93,24 @@ const ScheduleClient = ({
     setIsDetailsModal(true);
   };
 
+  // const testData = [
+  //   {
+  //     id: "2b8e6776-a3bf-46f5-981f-aadfba5a3f6a",
+  //     created_at: "2026-03-26T02:22:32.780317+00:00",
+  //     start: "2026-04-10",
+  //     title: "test title1 gd",
+  //     memo: "gdㅎㅇㅇ",
+  //     categoryName: "일상",
+  //     dateStr: null,
+  //     categoryId: "a44a55b8-77bf-4ece-9ca6-ad7ae0fffdc8",
+  //     end: "2026-04-20",
+  //     backgroundColor: "blue",
+  //     borderColor: "blue",
+  //     textColor: "white",
+  //   },
+  // ];
+  console.log("d", newScheduleData);
+
   return (
     <>
       <FullCalendar

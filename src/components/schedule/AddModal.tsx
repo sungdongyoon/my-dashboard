@@ -28,6 +28,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { startOfDay } from "date-fns";
+import { Input } from "../ui/input";
 
 interface AddModalType {
   className?: string;
@@ -116,7 +117,7 @@ const AddModal = ({
     );
   };
 
-  console.log("scheduleData", scheduleData);
+  console.log("sc", scheduleData);
 
   return (
     <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
@@ -159,14 +160,15 @@ const AddModal = ({
                     id="date-picker-simple"
                     className="justify-start font-normal"
                   >
-                    {scheduleData.start ? (
-                      scheduleData.start
-                    ) : (
-                      <span>시작일을 설정해주세요</span>
-                    )}
+                    {scheduleData.start
+                      ? scheduleData.start
+                      : "시작일을 설정해주세요"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent
+                  className="w-auto p-0 flex flex-row"
+                  align="start"
+                >
                   <Calendar
                     mode="single"
                     selected={new Date(scheduleData.start)}
@@ -183,6 +185,16 @@ const AddModal = ({
                     }}
                     defaultMonth={new Date(scheduleData.start)}
                   />
+                  <div className="border-l flex flex-col">
+                    <div className="p-3 flex flex-col flex-1 gap-3 border-t">
+                      <Label>Start Time</Label>
+                      <Input type="time" defaultValue="10:00:00" />
+                    </div>
+                    <div className="p-3 flex flex-col flex-1 gap-3 border-t">
+                      <Label>End Time</Label>
+                      <Input type="time" defaultValue="11:00:00" />
+                    </div>
+                  </div>
                 </PopoverContent>
               </Popover>
               <Popover>
