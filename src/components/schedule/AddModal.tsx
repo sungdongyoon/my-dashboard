@@ -203,10 +203,21 @@ const AddModal = ({
                         type="time"
                         value={`${scheduleData.startTime}`}
                         onChange={(e) => {
+                          const formated = scheduleData.start.slice(0, 10);
+                          const newTime = e.target.value;
+
                           setScheduleData({
                             ...scheduleData,
-                            start: `${scheduleData.start.slice(0, 10)} ${e.target.value}`,
-                            startTime: e.target.value,
+                            start: `${formated} ${newTime}`,
+                            startTime: newTime,
+                            end:
+                              scheduleData.end < `${formated} ${newTime}`
+                                ? `${formated} ${newTime}`
+                                : scheduleData.end,
+                            endTime:
+                              scheduleData.endTime < newTime
+                                ? newTime
+                                : scheduleData.endTime,
                           });
                         }}
                       />
@@ -253,8 +264,14 @@ const AddModal = ({
                       <Label>End Time</Label>
                       <Input
                         type="time"
-                        value={`${scheduleData.endTime}`}
+                        value={scheduleData.endTime}
+                        min={scheduleData.startTime}
                         onChange={(e) => {
+                          if (e.target.value < scheduleData.startTime) {
+                            alert("종료 시간은 시작 시간 이후로 설정해주세요.");
+                            return;
+                          }
+
                           setScheduleData({
                             ...scheduleData,
                             end: `${scheduleData.end.slice(0, 10)} ${e.target.value}`,
