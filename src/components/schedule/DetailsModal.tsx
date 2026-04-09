@@ -34,7 +34,7 @@ import { Spinner } from "../ui/spinner";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
-import { startOfDay } from "date-fns";
+import { format, startOfDay } from "date-fns";
 
 interface DetailsModalType {
   className?: string;
@@ -153,8 +153,6 @@ const DetailsModal = ({
     }
   };
 
-  console.log("de", detailsInput);
-
   return (
     <Dialog
       open={isDetailsModal}
@@ -232,10 +230,11 @@ const DetailsModal = ({
                             return {
                               ...prev,
                               start: selected,
-                              startStr: formatDateToISO(selected),
+                              startStr: format(selected, "yyyy-MM-dd HH:mm:ss"),
                               end: prev.end < selected ? selected : prev.end,
-                              endStr: formatDateToISO(
+                              endStr: format(
                                 prev.end < selected ? selected : prev.end,
+                                "yyyy-MM-dd HH:mm:ss",
                               ),
                             };
                           });
@@ -281,7 +280,7 @@ const DetailsModal = ({
                             return {
                               ...prev,
                               end: selected,
-                              endStr: formatDateToISO(selected),
+                              endStr: format(selected, "yyyy-MM-dd HH:mm:ss"),
                             };
                           });
                         }}

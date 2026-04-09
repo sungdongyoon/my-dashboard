@@ -27,7 +27,7 @@ import { Spinner } from "../ui/spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { Card, CardContent, CardFooter } from "../ui/card";
-import { startOfDay } from "date-fns";
+import { addHours, format, startOfDay } from "date-fns";
 import { Input } from "../ui/input";
 
 interface AddModalType {
@@ -43,6 +43,8 @@ interface ScheduleType {
   date: string;
   start: string;
   end: string;
+  startTime: string;
+  endTime: string;
   title: string;
   memo?: string;
   cateogryId: string;
@@ -63,13 +65,20 @@ const AddModal = ({
 
   /* hooks */
   const [scheduleData, setScheduleData] = useState<ScheduleType>({
-    date: dateISO,
-    start: dateISO,
-    end: dateISO,
+    date: `${format(date ?? "", "yyyy-MM-dd")} ${format(new Date(), "HH:00")}`,
+    start: `${format(date ?? "", "yyyy-MM-dd")} ${format(new Date(), "HH:00")}`,
+    end: `${format(date ?? "", "yyyy-MM-dd")} ${format(addHours(new Date(), 1), "HH:00")}`,
+    startTime: format(new Date(), "HH:00"),
+    endTime: format(addHours(new Date(), 1), "HH:00"),
     title: "",
     memo: "",
     cateogryId: "",
     categoryName: "",
+  });
+
+  const [timeValue, setTimeValue] = useState<{ start: string; end: string }>({
+    start: format(new Date(), "HH"),
+    end: format(addHours(new Date(), 1), "HH"),
   });
 
   /* 커스텀 훅 */
@@ -117,7 +126,7 @@ const AddModal = ({
     );
   };
 
-  console.log("sc", scheduleData);
+  console.log("test", scheduleData);
 
   return (
     <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
@@ -174,12 +183,14 @@ const AddModal = ({
                     selected={new Date(scheduleData.start)}
                     onSelect={(selected) => {
                       if (!selected) return;
+                      const formated = format(selected, "yyyy-MM-dd");
+
                       setScheduleData((prev) => ({
                         ...prev,
-                        start: formatDateToISO(selected),
+                        start: `${formated} ${prev.startTime}`,
                         end:
-                          prev.end < formatDateToISO(selected)
-                            ? formatDateToISO(selected)
+                          prev.end < `${formated} ${prev.endTime}`
+                            ? `${formated} ${prev.endTime}`
                             : prev.end,
                       }));
                     }}
@@ -188,11 +199,17 @@ const AddModal = ({
                   <div className="border-l flex flex-col">
                     <div className="p-3 flex flex-col flex-1 gap-3 border-t">
                       <Label>Start Time</Label>
-                      <Input type="time" defaultValue="10:00:00" />
-                    </div>
-                    <div className="p-3 flex flex-col flex-1 gap-3 border-t">
-                      <Label>End Time</Label>
-                      <Input type="time" defaultValue="11:00:00" />
+                      <Input
+                        type="time"
+                        value={`${scheduleData.startTime}`}
+                        onChange={(e) => {
+                          setScheduleData({
+                            ...scheduleData,
+                            start: `${scheduleData.start.slice(0, 10)} ${e.target.value}`,
+                            startTime: e.target.value,
+                          });
+                        }}
+                      />
                     </div>
                   </div>
                 </PopoverContent>
@@ -211,7 +228,10 @@ const AddModal = ({
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent
+                  className="w-auto p-0 flex flex-row"
+                  align="start"
+                >
                   <Calendar
                     mode="single"
                     selected={new Date(scheduleData.end)}
@@ -219,7 +239,7 @@ const AddModal = ({
                       if (!selected) return;
                       setScheduleData((prev) => ({
                         ...prev,
-                        end: formatDateToISO(selected),
+                        end: `${format(selected, "yyyy-MM-dd")} ${prev.endTime}`,
                       }));
                     }}
                     defaultMonth={new Date(scheduleData.end)}
@@ -228,6 +248,22 @@ const AddModal = ({
                       startOfDay(new Date(scheduleData.start))
                     }
                   />
+                  <div className="border-l flex flex-col">
+                    <div className="p-3 flex flex-col flex-1 gap-3 border-t">
+                      <Label>End Time</Label>
+                      <Input
+                        type="time"
+                        value={`${scheduleData.endTime}`}
+                        onChange={(e) => {
+                          setScheduleData({
+                            ...scheduleData,
+                            end: `${scheduleData.end.slice(0, 10)} ${e.target.value}`,
+                            endTime: e.target.value,
+                          });
+                        }}
+                      />
+                    </div>
+                  </div>
                 </PopoverContent>
               </Popover>
             </div>

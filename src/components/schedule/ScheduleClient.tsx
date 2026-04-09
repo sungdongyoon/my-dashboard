@@ -109,7 +109,8 @@ const ScheduleClient = ({
   //     textColor: "white",
   //   },
   // ];
-  console.log("d", newScheduleData);
+
+  console.log("new", newScheduleData);
 
   return (
     <>
