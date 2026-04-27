@@ -34,7 +34,7 @@ import { Spinner } from "../ui/spinner";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
-import { format, startOfDay } from "date-fns";
+import { format, parse, startOfDay } from "date-fns";
 
 interface DetailsModalType {
   className?: string;
@@ -153,6 +153,8 @@ const DetailsModal = ({
     }
   };
 
+  console.log("value", detailsInput);
+
   return (
     <Dialog
       open={isDetailsModal}
@@ -211,7 +213,7 @@ const DetailsModal = ({
                         className="justify-start font-normal"
                       >
                         {detailsInput?.start
-                          ? formatDateToISO(detailsInput?.start)
+                          ? detailsInput.startStr
                           : "시작일을 설정해주세요"}
                       </Button>
                     </PopoverTrigger>
@@ -224,17 +226,28 @@ const DetailsModal = ({
                         selected={detailsInput?.start}
                         onSelect={(selected) => {
                           if (!selected) return;
+                          const startTime = format(
+                            detailsInput?.start ?? "",
+                            "HH:mm",
+                          );
+
                           setDetailsInput((prev) => {
                             if (!prev) return prev;
+                            const parsedDate = parse(
+                              `${selected} ${startTime}`,
+                              "yyyy-MM-dd HH:mm",
+                              new Date(),
+                            );
 
                             return {
                               ...prev,
-                              start: selected,
-                              startStr: format(selected, "yyyy-MM-dd HH:mm:ss"),
-                              end: prev.end < selected ? selected : prev.end,
+                              start: parsedDate,
+                              startStr: format(selected, "yyyy-MM-dd HH:mm"),
+                              end:
+                                prev.end < parsedDate ? parsedDate : prev.end,
                               endStr: format(
-                                prev.end < selected ? selected : prev.end,
-                                "yyyy-MM-dd HH:mm:ss",
+                                prev.end < parsedDate ? parsedDate : prev.end,
+                                "yyyy-MM-dd HH:mm",
                               ),
                             };
                           });
@@ -244,11 +257,27 @@ const DetailsModal = ({
                       <div className="border-l flex flex-col">
                         <div className="p-3 flex flex-col flex-1 gap-3 border-t">
                           <Label>Start Time</Label>
-                          <Input type="time" defaultValue="10:00:00" />
-                        </div>
-                        <div className="p-3 flex flex-col flex-1 gap-3 border-t">
-                          <Label>End Time</Label>
-                          <Input type="time" defaultValue="11:00:00" />
+                          <Input
+                            type="time"
+                            value={format(detailsInput?.start ?? "", "HH:mm")}
+                            onChange={(e) => {
+                              const startTime = e.target.value;
+
+                              setDetailsInput((prev) => {
+                                if (!prev) return prev;
+                                const startDate = prev.startStr.slice(0, 10);
+                                return {
+                                  ...prev,
+                                  start: parse(
+                                    `${startDate} ${startTime}`,
+                                    "yyyy-MM-dd HH:mm",
+                                    new Date(),
+                                  ),
+                                  startStr: `${startDate} ${startTime}`,
+                                };
+                              });
+                            }}
+                          />
                         </div>
                       </div>
                     </PopoverContent>
@@ -261,7 +290,7 @@ const DetailsModal = ({
                         className="justify-start font-normal"
                       >
                         {detailsInput?.end
-                          ? formatDateToISO(detailsInput?.end)
+                          ? detailsInput?.endStr
                           : "종료일을 설정해주세요"}
                       </Button>
                     </PopoverTrigger>
@@ -293,12 +322,32 @@ const DetailsModal = ({
                       />
                       <div className="border-l flex flex-col">
                         <div className="p-3 flex flex-col flex-1 gap-3 border-t">
-                          <Label>Start Time</Label>
-                          <Input type="time" defaultValue="10:00:00" />
-                        </div>
-                        <div className="p-3 flex flex-col flex-1 gap-3 border-t">
                           <Label>End Time</Label>
-                          <Input type="time" defaultValue="11:00:00" />
+                          <Input
+                            type="time"
+                            value={format(detailsInput?.end ?? "", "HH:mm")}
+                            onChange={(e) => {
+                              const endTime = e.target.value;
+
+                              setDetailsInput((prev) => {
+                                if (!prev) return prev;
+
+                                const endDate = detailsInput?.dateStr.slice(
+                                  0,
+                                  10,
+                                );
+                                return {
+                                  ...prev,
+                                  end: parse(
+                                    `${endDate} ${endTime}`,
+                                    "yyyy-MM-dd HH:mm",
+                                    new Date(),
+                                  ),
+                                  endStr: `${endDate} ${endTime}`,
+                                };
+                              });
+                            }}
+                          />
                         </div>
                       </div>
                     </PopoverContent>

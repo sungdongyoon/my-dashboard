@@ -12,6 +12,7 @@ import { IoAddCircle } from "react-icons/io5";
 import AddModal from "@/src/components/schedule/AddModal";
 import DetailsModal from "./DetailsModal";
 import CategoryModal from "./CategoryModal";
+import { format } from "date-fns";
 
 interface DetailsType {
   id: string;
@@ -84,9 +85,9 @@ const ScheduleClient = ({
       date: event.start,
       start: event.start,
       end: event.end,
-      dateStr: event.startStr,
-      startStr: event.startStr,
-      endStr: event.endStr,
+      dateStr: format(event.startStr, "yyyy-MM-dd HH:mm"),
+      startStr: format(event.startStr, "yyyy-MM-dd HH:mm"),
+      endStr: format(event.endStr, "yyyy-MM-dd HH:mm"),
       category: "",
     });
 

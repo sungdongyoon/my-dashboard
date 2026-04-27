@@ -126,7 +126,7 @@ const AddModal = ({
     );
   };
 
-  console.log("test", scheduleData);
+  // console.log("test", scheduleData);
 
   return (
     <Dialog open={isAddModal} onOpenChange={(open) => setIsAddModal?.(open)}>
