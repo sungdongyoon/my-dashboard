@@ -35,6 +35,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { format, parse, startOfDay } from "date-fns";
+import Loading from "../Loading";
 
 interface DetailsModalType {
   className?: string;
@@ -152,8 +153,6 @@ const DetailsModal = ({
       );
     }
   };
-
-  console.log("value", detailsInput);
 
   return (
     <Dialog
@@ -357,12 +356,7 @@ const DetailsModal = ({
               <Field>
                 <Label htmlFor="category">카테고리</Label>
                 {categoryLoading ? (
-                  <div>
-                    <Badge>
-                      <Spinner data-icon="inline-start" />
-                      loading
-                    </Badge>
-                  </div>
+                  <Loading />
                 ) : (
                   <RadioGroup
                     className="flex gap-1"
