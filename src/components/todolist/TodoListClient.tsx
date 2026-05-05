@@ -19,7 +19,6 @@ import Loading from "../Loading";
 
 const TodoListClient = () => {
   /* hooks */
-  const [todoData, setTodoData] = useState<TodoDataType[]>([]); // 할 일 데이터
   const [isAddTodo, setIsAddTodo] = useState<boolean>(false); // 할 일 추가 모달 활성화
 
   /* Add Task 활성화 함수 */
@@ -34,6 +33,8 @@ const TodoListClient = () => {
     queryKey: ["category"],
     queryFn: () => axios.get("/todoMock.json").then((res) => res.data),
   });
+
+  console.log("todo", todoDatas);
 
   return (
     <div className="w-full h-full flex flex-col gap-3">
@@ -61,7 +62,7 @@ const TodoListClient = () => {
       </div>
 
       <div className="flex flex-col gap-3">
-        {todoData ? (
+        {todoDatas ? (
           todoLoading ? (
             <Loading />
           ) : (
@@ -76,7 +77,7 @@ const TodoListClient = () => {
                     <FieldContent>
                       <FieldTitle>{el.title}</FieldTitle>
                       <FieldDescription>{el.content}</FieldDescription>
-                      <Badge>{el.status}</Badge>
+                      <Badge>완료</Badge>
                     </FieldContent>
                   </Field>
                 </FieldLabel>
@@ -88,12 +89,7 @@ const TodoListClient = () => {
         )}
       </div>
 
-      <AddTaskModal
-        todoData={todoData}
-        setTodoData={setTodoData}
-        isAddTodo={isAddTodo}
-        setIsAddTodo={setIsAddTodo}
-      />
+      <AddTaskModal isAddTodo={isAddTodo} setIsAddTodo={setIsAddTodo} />
     </div>
   );
 };

@@ -12,7 +12,7 @@ export const usePostCategory = () => {
   return useMutation({
     mutationFn: apiPostCategoryData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["category"] });
     },
     onError: (error) => {
       console.error("카테고리 데이터 전송 실패", error);
@@ -27,7 +27,7 @@ export const useUpdateCategory = () => {
   return useMutation({
     mutationFn: apiUpdateCategoryData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["category"] });
     },
     onError: (error) => {
       console.error("카테고리 업데이트 실패", error);
@@ -42,7 +42,7 @@ export const useDeleteCategory = () => {
   return useMutation({
     mutationFn: apiDeleteCategoryData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["category"] });
     },
     onError: (error) => {
       console.error("카테고리 삭제 실패", error);

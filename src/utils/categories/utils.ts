@@ -4,7 +4,7 @@ import { createClient } from "../supabase/client";
 export const apiGetCategoryData = async () => {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.from("categories").select("*");
+  const { data, error } = await supabase.from("category").select("*");
 
   if (error) {
     console.error("카테고리 데이터 불러오기 실패", error);
@@ -26,7 +26,7 @@ export const apiPostCategoryData = async ({
 }) => {
   const supabase = await createClient();
 
-  await supabase.from("categories").insert([
+  await supabase.from("category").insert([
     {
       name,
       textColor,
@@ -51,7 +51,7 @@ export const apiUpdateCategoryData = async ({
   const supabase = await createClient();
 
   await supabase
-    .from("categories")
+    .from("category")
     .update({
       name,
       textColor,
@@ -64,5 +64,5 @@ export const apiUpdateCategoryData = async ({
 export const apiDeleteCategoryData = async ({ id }: { id: string }) => {
   const supabase = await createClient();
 
-  await supabase.from("categories").delete().eq("id", id);
+  await supabase.from("category").delete().eq("id", id);
 };

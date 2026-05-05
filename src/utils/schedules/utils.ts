@@ -4,7 +4,7 @@ import { createClient } from "../supabase/client";
 export const apiGetScheduleData = async () => {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.from("schedules").select("*");
+  const { data, error } = await supabase.from("schedule").select("*");
 
   if (error) {
     console.error("스케줄 데이터 불러오기 실패", error);
@@ -32,7 +32,7 @@ export const apiPostScheduleData = async ({
 }) => {
   const supabase = await createClient();
 
-  await supabase.from("schedules").insert([
+  await supabase.from("schedule").insert([
     {
       start,
       end,
@@ -65,7 +65,7 @@ export const apiUpdateScheduleData = async ({
   const supabase = await createClient();
 
   await supabase
-    .from("schedules")
+    .from("schedule")
     .update({
       start,
       end,
@@ -87,5 +87,5 @@ export const apiDeleteScheduleData = async ({
 }) => {
   const supabase = await createClient();
 
-  await supabase.from("schedules").delete().eq("id", id);
+  await supabase.from("schedule").delete().eq("id", id);
 };
