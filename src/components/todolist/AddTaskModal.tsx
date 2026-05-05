@@ -15,6 +15,8 @@ import { Field, FieldGroup } from "../ui/field";
 import { Label } from "../ui/label";
 import type { TodoDataType, AddTaskType } from "./types";
 import { Button } from "../ui/button";
+import { usePostTodoList } from "@/src/hooks/mutations/useTodoListMutation";
+import { useRouter } from "next/navigation";
 
 const AddTaskModal = ({ isAddTodo, setIsAddTodo }: AddTaskType) => {
   /* hooks */
@@ -23,6 +25,10 @@ const AddTaskModal = ({ isAddTodo, setIsAddTodo }: AddTaskType) => {
     title: "",
     memo: "",
   }); // todo 바구니
+  const router = useRouter();
+
+  /* 커스텀 훅 */
+  const postTodoList = usePostTodoList();
 
   /* 할 일 추가 함수 */
   const handelChangeTask = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +39,58 @@ const AddTaskModal = ({ isAddTodo, setIsAddTodo }: AddTaskType) => {
       [name]: value,
     }));
   };
+
+  /* [post] 할 일 데이터 */
+  const handlePostTodoList = async () => {
+    if (!todoValue.title) {
+      alert("할 일을 입력해주세요!");
+      return;
+    }
+
+    postTodoList.mutate(
+      {
+        title: todoValue.title,
+        memo: todoValue.memo,
+      },
+      {
+        onSuccess: () => {
+          alert("할 일이 추가되었습니다!");
+          setTodoValue({ date: new Date(), title: "", memo: "" });
+          setIsAddTodo(false);
+          router.refresh();
+        },
+      },
+    );
+  };
+
+  /* [post] 스케줄 데이터 */
+  //  const handlePostSchedule = async () => {
+  //   if (!scheduleData.title) {
+  //     alert("할 일을 입력해주세요!");
+  //     return;
+  //   } else if (!scheduleData.cateogryId) {
+  //     alert("카테고리를 선택해주세요!");
+  //     return;
+  //   }
+
+  //   postSchedule.mutate(
+  //     {
+  //       start: scheduleData.start,
+  //       end: scheduleData.end,
+  //       title: scheduleData.title,
+  //       memo: scheduleData.memo ?? "",
+  //       categoryId: scheduleData.cateogryId,
+  //       categoryName: scheduleData.categoryName,
+  //     },
+  //     {
+  //       onSuccess: () => {
+  //         alert("일정이 등록되었습니다!");
+  //         setIsAddModal?.(false);
+  //         router.refresh();
+  //       },
+  //     },
+  //   );
+  // };
 
   console.log("value", todoValue);
 
@@ -75,7 +133,9 @@ const AddTaskModal = ({ isAddTodo, setIsAddTodo }: AddTaskType) => {
           <DialogClose asChild>
             <Button variant="outline">닫기</Button>
           </DialogClose>
-          <Button type="submit">저장</Button>
+          <Button type="submit" onClick={handlePostTodoList}>
+            저장
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

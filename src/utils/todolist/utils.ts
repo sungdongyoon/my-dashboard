@@ -13,3 +13,21 @@ export const apiGetTodoListData = async () => {
 
   return data;
 };
+
+// [post] 할 일 데이터
+export const apiPostTodoListData = async ({
+  title,
+  memo,
+}: {
+  title: string;
+  memo: string;
+}) => {
+  const supabase = await createClient();
+
+  await supabase.from("todolist").insert([
+    {
+      title,
+      memo,
+    },
+  ]);
+};
