@@ -17,7 +17,7 @@ import AddTaskModal from "./AddTaskModal";
 import { Badge } from "../ui/badge";
 import Loading from "../Loading";
 
-const TodoListClient = () => {
+const TodoListClient = ({ todoData }: { todoData: any }) => {
   /* hooks */
   const [isAddTodo, setIsAddTodo] = useState<boolean>(false); // 할 일 추가 모달 활성화
 
@@ -33,8 +33,6 @@ const TodoListClient = () => {
     queryKey: ["category"],
     queryFn: () => axios.get("/todoMock.json").then((res) => res.data),
   });
-
-  console.log("todo", todoDatas);
 
   return (
     <div className="w-full h-full flex flex-col gap-3">
@@ -62,27 +60,23 @@ const TodoListClient = () => {
       </div>
 
       <div className="flex flex-col gap-3">
-        {todoDatas ? (
-          todoLoading ? (
-            <Loading />
-          ) : (
-            todoDatas.map(
-              (
-                el: { title: string; content: string; status: string },
-                idx: number,
-              ) => (
-                <FieldLabel key={`${el.title}-${idx}`}>
-                  <Field orientation="horizontal">
-                    <Checkbox id="toggle-checkbox-2" name="toggle-checkbox-2" />
-                    <FieldContent>
-                      <FieldTitle>{el.title}</FieldTitle>
-                      <FieldDescription>{el.content}</FieldDescription>
-                      <Badge>완료</Badge>
-                    </FieldContent>
-                  </Field>
-                </FieldLabel>
-              ),
-            )
+        {todoData ? (
+          todoData.map(
+            (
+              el: { title: string; content: string; status: string },
+              idx: number,
+            ) => (
+              <FieldLabel key={`${el.title}-${idx}`}>
+                <Field orientation="horizontal">
+                  <Checkbox id="toggle-checkbox-2" name="toggle-checkbox-2" />
+                  <FieldContent>
+                    <FieldTitle>{el.title}</FieldTitle>
+                    <FieldDescription>{el.content}</FieldDescription>
+                    <Badge>완료</Badge>
+                  </FieldContent>
+                </Field>
+              </FieldLabel>
+            ),
           )
         ) : (
           <span className="font-semibold ">오늘 할 일 없음!</span>
