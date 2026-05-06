@@ -63,35 +63,6 @@ const AddTaskModal = ({ isAddTodo, setIsAddTodo }: AddTaskType) => {
     );
   };
 
-  /* [post] 스케줄 데이터 */
-  //  const handlePostSchedule = async () => {
-  //   if (!scheduleData.title) {
-  //     alert("할 일을 입력해주세요!");
-  //     return;
-  //   } else if (!scheduleData.cateogryId) {
-  //     alert("카테고리를 선택해주세요!");
-  //     return;
-  //   }
-
-  //   postSchedule.mutate(
-  //     {
-  //       start: scheduleData.start,
-  //       end: scheduleData.end,
-  //       title: scheduleData.title,
-  //       memo: scheduleData.memo ?? "",
-  //       categoryId: scheduleData.cateogryId,
-  //       categoryName: scheduleData.categoryName,
-  //     },
-  //     {
-  //       onSuccess: () => {
-  //         alert("일정이 등록되었습니다!");
-  //         setIsAddModal?.(false);
-  //         router.refresh();
-  //       },
-  //     },
-  //   );
-  // };
-
   console.log("value", todoValue);
 
   return (

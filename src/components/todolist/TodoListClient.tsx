@@ -16,13 +16,34 @@ import { Checkbox } from "../ui/checkbox";
 import AddTaskModal from "./AddTaskModal";
 import { Badge } from "../ui/badge";
 import Loading from "../Loading";
+import { IoClose } from "react-icons/io5";
+import { useDeleteTodoList } from "@/src/hooks/mutations/useTodoListMutation";
+import { useRouter } from "next/navigation";
 
 const TodoListClient = ({ todoData }: { todoData: any }) => {
   /* hooks */
   const [isAddTodo, setIsAddTodo] = useState<boolean>(false); // 할 일 추가 모달 활성화
+  const router = useRouter();
 
-  /* Add Task 활성화 함수 */
-  const handleClickShowAddTask = () => {};
+  /* 커스텀 훅 */
+  const deleteTodoList = useDeleteTodoList();
+
+  /* [delete] 할 일 삭제 함수 */
+  const handleDeleteTodo = (id: string) => {
+    console.log("id", id);
+
+    if (confirm("할 일을 삭제하시겠습니까?")) {
+      deleteTodoList.mutate(
+        { todoId: id },
+        {
+          onSuccess: () => {
+            alert("할 일이 삭제되었습니다!");
+            router.refresh();
+          },
+        },
+      );
+    }
+  };
 
   /* 할 일 데이터 */
   const {
@@ -63,10 +84,15 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
         {todoData ? (
           todoData.map(
             (
-              el: { title: string; content: string; status: string },
+              el: {
+                todoId: string;
+                title: string;
+                content: string;
+                status: string;
+              },
               idx: number,
             ) => (
-              <FieldLabel key={`${el.title}-${idx}`}>
+              <FieldLabel key={`${el.title}-${idx}`} className="cursor-pointer">
                 <Field orientation="horizontal">
                   <Checkbox id="toggle-checkbox-2" name="toggle-checkbox-2" />
                   <FieldContent>
@@ -74,6 +100,14 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
                     <FieldDescription>{el.content}</FieldDescription>
                     <Badge>완료</Badge>
                   </FieldContent>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="cursor-pointer"
+                    onClick={() => handleDeleteTodo(el.todoId)}
+                  >
+                    <IoClose />
+                  </Button>
                 </Field>
               </FieldLabel>
             ),

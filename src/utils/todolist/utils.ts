@@ -31,3 +31,10 @@ export const apiPostTodoListData = async ({
     },
   ]);
 };
+
+// [delete] 할 일 데이터
+export const apiDeleteTodoListData = async ({ todoId }: { todoId: string }) => {
+  const supabase = await createClient();
+
+  await supabase.from("todolist").delete().eq("todoId", todoId);
+};
