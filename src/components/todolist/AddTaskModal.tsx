@@ -17,11 +17,11 @@ import type { TodoDataType, AddTaskType } from "./types";
 import { Button } from "../ui/button";
 import { usePostTodoList } from "@/src/hooks/mutations/useTodoListMutation";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
 
-const AddTaskModal = ({ isAddTodo, setIsAddTodo }: AddTaskType) => {
+const AddTaskModal = ({ isAddTodo, setIsAddTodo, todoDate }: AddTaskType) => {
   /* hooks */
   const [todoValue, setTodoValue] = useState<TodoDataType>({
-    date: new Date(),
     title: "",
     memo: "",
   }); // todo 바구니
@@ -51,19 +51,21 @@ const AddTaskModal = ({ isAddTodo, setIsAddTodo }: AddTaskType) => {
       {
         title: todoValue.title,
         memo: todoValue.memo,
+        todoDate: todoDate,
       },
       {
         onSuccess: () => {
           alert("할 일이 추가되었습니다!");
-          setTodoValue({ date: new Date(), title: "", memo: "" });
+          setTodoValue({
+            title: "",
+            memo: "",
+          });
           setIsAddTodo(false);
           router.refresh();
         },
       },
     );
   };
-
-  console.log("value", todoValue);
 
   return (
     <Dialog open={isAddTodo} onOpenChange={(open) => setIsAddTodo(open)}>

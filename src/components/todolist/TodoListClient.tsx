@@ -19,9 +19,14 @@ import Loading from "../Loading";
 import { IoClose } from "react-icons/io5";
 import { useDeleteTodoList } from "@/src/hooks/mutations/useTodoListMutation";
 import { useRouter } from "next/navigation";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
+import { format } from "date-fns";
 
 const TodoListClient = ({ todoData }: { todoData: any }) => {
+  const date = new Date();
   /* hooks */
+  const [todoDate, setTodoData] = useState<string>(format(date, "yyyy-MM-dd"));
   const [isAddTodo, setIsAddTodo] = useState<boolean>(false); // 할 일 추가 모달 활성화
   const router = useRouter();
 
@@ -30,8 +35,6 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
 
   /* [delete] 할 일 삭제 함수 */
   const handleDeleteTodo = (id: string) => {
-    console.log("id", id);
-
     if (confirm("할 일을 삭제하시겠습니까?")) {
       deleteTodoList.mutate(
         { todoId: id },
@@ -59,7 +62,7 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
     <div className="w-full h-full flex flex-col gap-3">
       <div className="">
         <h1 className="text-[2rem]">To Do</h1>
-        <Badge className="bg-orange-300 text-orange-50">2026-04-27</Badge>
+        <Badge className="bg-orange-300 text-orange-50">{todoDate}</Badge>
       </div>
 
       <div className="border-t w-full h-[1px]"></div>
@@ -75,9 +78,25 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
         <Button size="sm" variant="outline">
           Filters
         </Button>
-        <Button size="sm" variant="outline">
-          Date
-        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button size="sm" variant="outline">
+              Date
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0 flex flex-row" align="start">
+            <Calendar
+              mode="single"
+              selected={new Date(todoDate)}
+              defaultMonth={new Date(todoDate)}
+              onSelect={(selected) => {
+                if (!selected) return;
+                const formated = format(selected, "yyyy-MM-dd");
+                setTodoData(formated);
+              }}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -87,8 +106,7 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
               el: {
                 todoId: string;
                 title: string;
-                content: string;
-                status: string;
+                memo: string;
               },
               idx: number,
             ) => (
@@ -97,8 +115,7 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
                   <Checkbox id="toggle-checkbox-2" name="toggle-checkbox-2" />
                   <FieldContent>
                     <FieldTitle>{el.title}</FieldTitle>
-                    <FieldDescription>{el.content}</FieldDescription>
-                    <Badge>완료</Badge>
+                    <FieldDescription>{el.memo}</FieldDescription>
                   </FieldContent>
                   <Button
                     size="icon"
@@ -117,7 +134,11 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
         )}
       </div>
 
-      <AddTaskModal isAddTodo={isAddTodo} setIsAddTodo={setIsAddTodo} />
+      <AddTaskModal
+        isAddTodo={isAddTodo}
+        setIsAddTodo={setIsAddTodo}
+        todoDate={todoDate}
+      />
     </div>
   );
 };

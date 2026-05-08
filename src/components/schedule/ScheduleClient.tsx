@@ -111,8 +111,6 @@ const ScheduleClient = ({
   //   },
   // ];
 
-  console.log("new", newScheduleData);
-
   return (
     <>
       <FullCalendar

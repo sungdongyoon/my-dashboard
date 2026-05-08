@@ -18,9 +18,11 @@ export const apiGetTodoListData = async () => {
 export const apiPostTodoListData = async ({
   title,
   memo,
+  todoDate,
 }: {
   title: string;
   memo: string;
+  todoDate: string;
 }) => {
   const supabase = await createClient();
 
@@ -28,6 +30,7 @@ export const apiPostTodoListData = async ({
     {
       title,
       memo,
+      todoDate,
     },
   ]);
 };
