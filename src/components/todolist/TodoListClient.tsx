@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TodoDataType } from "./types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -18,7 +18,7 @@ import { Badge } from "../ui/badge";
 import Loading from "../Loading";
 import { IoClose } from "react-icons/io5";
 import { useDeleteTodoList } from "@/src/hooks/mutations/useTodoListMutation";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
@@ -26,9 +26,12 @@ import { format } from "date-fns";
 const TodoListClient = ({ todoData }: { todoData: any }) => {
   const date = new Date();
   /* hooks */
-  const [todoDate, setTodoData] = useState<string>(format(date, "yyyy-MM-dd"));
+  const [todoDate, setTodoDate] = useState<string>(format(date, "yyyy-MM-dd"));
   const [isAddTodo, setIsAddTodo] = useState<boolean>(false); // 할 일 추가 모달 활성화
+
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   /* 커스텀 훅 */
   const deleteTodoList = useDeleteTodoList();
@@ -57,6 +60,12 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
     queryKey: ["category"],
     queryFn: () => axios.get("/todoMock.json").then((res) => res.data),
   });
+
+  useEffect(() => {
+    setTodoDate(searchParams.get("date") ?? format(date, "yyyy-MM-dd"));
+  }, []);
+
+  console.log("tododate", todoDate);
 
   return (
     <div className="w-full h-full flex flex-col gap-3">
@@ -91,8 +100,13 @@ const TodoListClient = ({ todoData }: { todoData: any }) => {
               defaultMonth={new Date(todoDate)}
               onSelect={(selected) => {
                 if (!selected) return;
-                const formated = format(selected, "yyyy-MM-dd");
-                setTodoData(formated);
+                const formatted = format(selected, "yyyy-MM-dd");
+                const params = new URLSearchParams(searchParams);
+
+                params.set("date", formatted);
+                router.replace(`${pathname}?${params}`);
+
+                setTodoDate(formatted);
               }}
             />
           </PopoverContent>
